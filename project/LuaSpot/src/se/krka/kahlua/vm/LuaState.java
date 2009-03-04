@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Random;
+import nl.uva.np.luaspot.LuaStdLib;
 import se.krka.kahlua.stdlib.BaseLib;
 import se.krka.kahlua.stdlib.CoroutineLib;
 import se.krka.kahlua.stdlib.MathLib;
@@ -138,8 +139,12 @@ public final class LuaState {
 		CoroutineLib.register(this);
 		OsLib.register(this);
 
-		LuaClosure closure = loadByteCodeFromResource("stdlib", getEnvironment());
-		call(closure, null, null, null);
+        try {
+            LuaStdLib.register(this);
+        }
+        catch (IOException e) {
+            System.out.println("Can't load LuaStdLib");
+        }
 	}
 
 	public int call(int nArguments) {
