@@ -17,43 +17,68 @@ public class ServiceProvider {
 
     private ManagerService manager;
     private LuaState state;
+    
+    private static ServiceProvider instance = null;
 
-    public ServiceProvider() {
-        initLuaVM();
+    public static synchronized ServiceProvider getInstance() {
+        if (instance == null) {
+            instance = new ServiceProvider();
+        }
+        return instance;
+    }
+
+    protected ServiceProvider() {
         manager = new ManagerService(state);
-    }
-
-    private void initLuaVM() {
-        state = new LuaState(System.out);
-        SunSpotLib.register(state);
-    }
-
-    // Handle data with the following format:
-    //
-    //    call [app] [func] [data..]
-    //
-
-    public void call(String app, String func, byte[] data) {
-        if (manager.equals(app)) {
-            manager.call(func, data);
-        }
-        else {
-            call(app, func, Util.makeArguments(data));
-        }
-    }
-
-    public void call(String app, String func, Object[] param) {
-        try {
-            LuaTable application = (LuaTable)state.getEnvironment().rawget(app);
-            LuaClosure function = (LuaClosure)application.rawget(func);
-            state.call(function, param);
-        }
-        catch (NullPointerException e) {
-        }
     }
 
     public ManagerService getManagerService() {
         return manager;
+    }
+
+    public void dispatch(String src, String msg) {
+        System.out.println("[service] dispatch: src=" + src + ", msg=" + msg);
+        
+        StringBuffer sb = new StringBuffer(msg);
+        String type = Util.getNextToken(sb, true);
+
+        System.out.println("type=" + type);
+
+        if ("c".equals(type)) {
+            System.out.println("call message");
+            
+            String app = Util.getNextToken(sb, true);
+            String func = Util.getNextToken(sb, true);
+
+            System.out.println("app=" + app + ", func=" + func);
+            System.out.println("param=" + sb.toString());
+
+            if ("manager".equals(app)) {
+                manager.call(func, sb.toString());
+            }
+            else {
+
+                LuaState state = new LuaState(System.out);
+                initLuaVM(state);
+
+                LuaTable table = (LuaTable)state.getEnvironment().rawget("luaspot");
+                table.rawset("pkt_src", src);
+
+                LuaTable application = (LuaTable)state.getEnvironment().rawget(app);
+                LuaClosure function = (LuaClosure)application.rawget(func);
+                state.call(function, new Object[] { sb.toString() });
+
+            }
+        }
+        else {
+            System.out.println("unknown message");
+        }
+        
+    }
+
+    private void initLuaVM(LuaState state) {
+        SunSpotLib.register(state);
+        LuaSpotLib.register(state);
+        ApplicationRegistry.register(state);
     }
 
 }

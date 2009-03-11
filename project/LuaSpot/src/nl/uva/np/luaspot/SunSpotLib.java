@@ -125,7 +125,8 @@ public class SunSpotLib implements JavaFunction {
         BaseLib.luaAssert(nArguments >= 1, "Not enough arguments");
         
         int pos = (int)LuaState.fromDouble(callFrame.get(0));
-        System.out.println("led: type=" + function + ", pos=" + pos);
+        if (pos < 0) { pos = 0; }
+        if (pos > 7) { pos = 7; }
 
         switch (function) {
             case LED_ON: {
@@ -178,27 +179,27 @@ public class SunSpotLib implements JavaFunction {
         try {
             switch (function) {
                 case ACCEL_X: {
-                    callFrame.push(new Double(accel.getTiltX()));
+                    callFrame.push(new Double(Math.toDegrees(accel.getTiltX())));
                     return 1;
                 }
                 case ACCEL_Y: {
-                    callFrame.push(new Double(accel.getTiltY()));
+                    callFrame.push(new Double(Math.toDegrees(accel.getTiltY())));
                     return 1;
                 }
                 case ACCEL_Z: {
-                    callFrame.push(new Double(accel.getTiltZ()));
+                    callFrame.push(new Double(Math.toDegrees(accel.getTiltZ())));
                     return 1;
                 }
                 case ACCEL_REL_X: {
-                    callFrame.push(new Double(accel.getRelativeAccelX()));
+                    callFrame.push(new Double(Math.toDegrees(accel.getRelativeAccelX())));
                     return 1;
                 }
                 case ACCEL_REL_Y: {
-                    callFrame.push(new Double(accel.getRelativeAccelY()));
+                    callFrame.push(new Double(Math.toDegrees(accel.getRelativeAccelY())));
                     return 1;
                 }
                 case ACCEL_REL_Z: {
-                    callFrame.push(new Double(accel.getRelativeAccelZ()));
+                    callFrame.push(new Double(Math.toDegrees(accel.getRelativeAccelZ())));
                     return 1;
                 }
                 case ACCEL_SET_REST: {
