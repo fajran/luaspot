@@ -62,6 +62,7 @@ public class ServiceProvider {
 
                 LuaTable table = (LuaTable)state.getEnvironment().rawget("luaspot");
                 table.rawset("pkt_src", src);
+                table.rawset("sender", src);
 
                 LuaTable application = (LuaTable)state.getEnvironment().rawget(app);
                 LuaClosure function = (LuaClosure)application.rawget(func);
