@@ -13,13 +13,11 @@ import se.krka.kahlua.vm.LuaState;
  */
 public class ManagerService {
 
-    private LuaState state;
-
-    public ManagerService(LuaState state) {
-        this.state = state;
+    public ManagerService() {
     }
 
     public void call(String func, String param) {
+        System.out.println("[manager] function=" + func);
         if ("install".equals(func)) {
             StringBuffer sb = new StringBuffer(param);
             String app = Util.getNextToken(sb, true);

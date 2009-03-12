@@ -5,8 +5,13 @@
 
 package nl.uva.np.luaspot;
 
+import com.sun.spot.util.Utils;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
+import javax.microedition.io.Connector;
+import javax.microedition.io.Datagram;
+import javax.microedition.io.DatagramConnection;
 import se.krka.kahlua.stdlib.BaseLib;
 import se.krka.kahlua.vm.JavaFunction;
 import se.krka.kahlua.vm.LuaCallFrame;
@@ -58,6 +63,8 @@ public class LuaSpotLib implements JavaFunction {
     private static Hashtable mem;
     private static int msgCounter;
 
+    private static String nodeAddress = "";
+
     public static void register(LuaState state) {
         initFunctions();
         LuaTable sunspot = new LuaTable();
@@ -82,14 +89,62 @@ public class LuaSpotLib implements JavaFunction {
         }
     }
 
+    public static void setNodeAddress(String address) {
+        nodeAddress = address;
+    }
+
     private static String getNodeAddress() {
-        // TODO
-        return "";
+        return nodeAddress;
     }
 
     private synchronized static String getNewMessageId() {
         return getNodeAddress() + (msgCounter++);
     }
+
+    public static Object sendLock = new Object();
+
+    public static void send(final String address, final String data) {
+
+        new Thread() {
+
+            public void run() {
+
+                synchronized (sendLock) {
+                    
+                    // We create a DatagramConnection
+                    DatagramConnection dgConnection = null;
+                    Datagram dg = null;
+
+                    try {
+                        // The Connection is a broadcast so we specify it in the creation string
+                        dgConnection = (DatagramConnection) Connector.open("radiogram://" + address + ":37");
+                        // Then, we ask for a datagram with the maximum size allowed
+                        dg = dgConnection.newDatagram(dgConnection.getMaximumLength());
+                    } catch (IOException ex) {
+                        System.out.println("Could not open radiogram connection");
+                        ex.printStackTrace();
+                        return;
+                    }
+
+                    try {
+                        // We send the message (UTF encoded)
+                        System.out.println("Sending data to " + address + ", len=" + data.length());
+                        dg.reset();
+                        dg.writeUTF(data);
+                        dgConnection.send(dg);
+                        dgConnection.close();
+                        System.out.println("sent.");
+
+                    }
+                    catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                }
+            }
+        }.start();
+    }
+
 
     public LuaSpotLib(int index) {
         this.index = index;
@@ -142,8 +197,7 @@ public class LuaSpotLib implements JavaFunction {
         sb.append(" ");
         sb.append(msg);
 
-        // TODO
-        // send(dst, sb.toString());
+        send(dst, sb.toString());
 
         return 0;
     }
@@ -153,8 +207,7 @@ public class LuaSpotLib implements JavaFunction {
         String dst = (String)callFrame.get(0);
         String msg = (String)callFrame.get(1);
 
-        // TODO
-        // send(dst, msg);
+        send(dst, msg);
 
         return 0;
     }

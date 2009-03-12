@@ -9,6 +9,7 @@ import com.sun.spot.sensorboard.EDemoBoard;
 import com.sun.spot.sensorboard.peripheral.IAccelerometer3D;
 import com.sun.spot.sensorboard.peripheral.ITemperatureInput;
 import com.sun.spot.sensorboard.peripheral.ITriColorLED;
+import com.sun.spot.util.Utils;
 import java.io.IOException;
 import se.krka.kahlua.stdlib.BaseLib;
 import se.krka.kahlua.vm.JavaFunction;
@@ -26,7 +27,7 @@ public class SunSpotLib implements JavaFunction {
     private static ITemperatureInput temperature = EDemoBoard.getInstance().getADCTemperature();
     private static IAccelerometer3D accel = EDemoBoard.getInstance().getAccelerometer();
 
-    private static final int NUM_FUNCTIONS = 13;
+    private static final int NUM_FUNCTIONS = 14;
     
     private static final int LED_ON = 0;
     private static final int LED_OFF = 1;
@@ -43,6 +44,8 @@ public class SunSpotLib implements JavaFunction {
     private static final int ACCEL_REL_Y = 10;
     private static final int ACCEL_REL_Z = 11;
     private static final int ACCEL_SET_REST = 12;
+
+    private static final int SLEEP = 13;
 
     private static String[] names;
     
@@ -64,6 +67,7 @@ public class SunSpotLib implements JavaFunction {
         names[ACCEL_REL_Z] = "accel_relz";
         names[ACCEL_SET_REST] = "accel_rest";
 
+        names[SLEEP] = "sleep";
     }
 
     private int index;
@@ -116,6 +120,9 @@ public class SunSpotLib implements JavaFunction {
             case ACCEL_REL_Z:
             case ACCEL_SET_REST:
                 return accel(index, callFrame, nArguments);
+
+            case SLEEP:
+                return sleep(callFrame, nArguments);
 
             default: return 0;
         }
@@ -213,5 +220,11 @@ public class SunSpotLib implements JavaFunction {
 
         return 0;
     }
-    
+
+    private static int sleep(LuaCallFrame callFrame, int nArguments) {
+        BaseLib.luaAssert(nArguments >= 1, "Not enough arguments");
+        int delay = (int)LuaState.fromDouble(callFrame.get(0));
+        Utils.sleep(delay);
+        return 0;
+    }
 }

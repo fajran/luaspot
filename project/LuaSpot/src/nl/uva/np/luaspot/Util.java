@@ -34,15 +34,15 @@ public class Util {
         char[] chars = new char[len];
         sb.getChars(0, len, chars, 0);
 
-        System.out.println("getToken: prev=[" + sb.toString() + "]");
+//        System.out.println("getToken: prev=[" + sb.toString() + "]");
         if (delete) {
-            System.out.println("getToken: delete 0-" + len);
+//            System.out.println("getToken: delete 0-" + len);
             sb.delete(0, len);
             if (sb.length() > 0) {
                 sb.delete(0, 1);
             }
         }
-        System.out.println("getToken: prev=[" + sb.toString() + "]");
+//        System.out.println("getToken: prev=[" + sb.toString() + "]");
 
 
         return new String(chars);

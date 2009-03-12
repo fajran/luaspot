@@ -16,7 +16,6 @@ import se.krka.kahlua.vm.LuaTable;
 public class ServiceProvider {
 
     private ManagerService manager;
-    private LuaState state;
     
     private static ServiceProvider instance = null;
 
@@ -28,7 +27,7 @@ public class ServiceProvider {
     }
 
     protected ServiceProvider() {
-        manager = new ManagerService(state);
+        manager = new ManagerService();
     }
 
     public ManagerService getManagerService() {
@@ -36,7 +35,7 @@ public class ServiceProvider {
     }
 
     public void dispatch(String src, String msg) {
-        System.out.println("[service] dispatch: src=" + src + ", msg=" + msg);
+        System.out.println("[service] dispatch: src=" + src + ", msg len=" + msg.length());
         
         StringBuffer sb = new StringBuffer(msg);
         String type = Util.getNextToken(sb, true);
@@ -49,8 +48,7 @@ public class ServiceProvider {
             String app = Util.getNextToken(sb, true);
             String func = Util.getNextToken(sb, true);
 
-            System.out.println("app=" + app + ", func=" + func);
-            System.out.println("param=" + sb.toString());
+            System.out.println("app=" + app + ", func=" + func + ", param len=" + sb.length());
 
             if ("manager".equals(app)) {
                 manager.call(func, sb.toString());
@@ -65,7 +63,21 @@ public class ServiceProvider {
                 table.rawset("sender", src);
 
                 LuaTable application = (LuaTable)state.getEnvironment().rawget(app);
+                if (application == null) {
+                    System.out.println("Unknown application: " + app);
+                    return;
+                }
+                System.out.println("[dispatch] application=" + application);
+
                 LuaClosure function = (LuaClosure)application.rawget(func);
+                if (function == null) {
+                    System.out.println("Unknown function: " + function);
+                    return;
+                }
+                System.out.println("[dispatch] function=" + function);
+
+
+
                 state.call(function, new Object[] { sb.toString() });
 
             }
