@@ -5,11 +5,6 @@
 
 package nl.uva.np.luaspot;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import se.krka.kahlua.vm.LuaClosure;
-import se.krka.kahlua.vm.LuaPrototype;
 import se.krka.kahlua.vm.LuaState;
 
 /**
@@ -28,18 +23,43 @@ public class ManagerService {
         if ("install".equals(func)) {
             StringBuffer sb = new StringBuffer(param);
             String app = Util.getNextToken(sb, true);
-            install(app, sb.toString());
+            int segment = Integer.parseInt(Util.getNextToken(sb, true));
+            int lastSegment = Integer.parseInt(Util.getNextToken(sb, true));
+
+            if (segment == 0) {
+                prepare(app);
+            }
+
+            update(app, sb.toString());
+
+            if (segment == lastSegment) {
+                finalize(app);
+            }
         }
         else if ("remove".equals(func)) {
             remove(param);
         }
     }
 
-    public void install(String app, String data) {
-        ApplicationRegistry.addApplication(app, data);
+    public void prepare(String app) {
+        ApplicationRegistry.prepareApplication(app);
     }
 
-    private void remove(String app) {
+    public void update(String app, String data) {
+        ApplicationRegistry.updateApplication(app, data);
+    }
+
+    public void finalize(String app) {
+        ApplicationRegistry.finalizeApplication(app);
+    }
+
+    public void remove(String app) {
         ApplicationRegistry.removeApplication(app);
+    }
+
+    public void install(String app, String data) {
+        prepare(app);
+        update(app, data);
+        finalize(app);
     }
 }
