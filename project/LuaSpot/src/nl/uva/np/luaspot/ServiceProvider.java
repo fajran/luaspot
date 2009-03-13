@@ -36,6 +36,7 @@ public class ServiceProvider {
 
     public void dispatch(String src, String msg) {
         System.out.println("[service] dispatch: src=" + src + ", msg len=" + msg.length());
+//        System.out.println("           message: " + msg);
         
         StringBuffer sb = new StringBuffer(msg);
         String type = Util.getNextToken(sb, true);

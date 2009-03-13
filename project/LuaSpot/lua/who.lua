@@ -17,7 +17,7 @@ who = {
 	end,
 
 	dispatch = function()
-		luaspot.dispatch("0014.4F01.0000.3C63", "c who blink")
+		luaspot.dispatch(luaspot.sender, "c who blink")
 	end,
 
 	blink = function()
@@ -27,17 +27,23 @@ who = {
 				sunspot.led_off(j)
 			end
 
-			sunspot.sleep(1000)
+			sunspot.sleep(300)
 
 			for j=0,7 do
 				sunspot.led_on(j)
-				sunspot.sleep(1000)
+				sunspot.sleep(300)
 			end
+		end
+
+		for j=0,7 do
+			sunspot.led_rgb(j, 255, 255, 0)
+			sunspot.led_off(j)
 		end
 	end,
 
 	ping = function()
-		luaspot.send_raw(luaspot.sender, "c who pong")
+		print("[who] ping src=" .. luaspot.sender)
+		luaspot.send(luaspot.sender, "c who pong")
 	end,
 
 	pong = function()

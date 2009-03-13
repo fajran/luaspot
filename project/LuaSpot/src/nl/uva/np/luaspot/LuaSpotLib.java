@@ -24,6 +24,8 @@ import se.krka.kahlua.vm.LuaTable;
  */
 public class LuaSpotLib implements JavaFunction {
 
+    private static final String DEFAULT_MAX_HOP = "10";
+
     public static final String[] NAMES = {
         "send",
         "send_raw",
@@ -59,9 +61,9 @@ public class LuaSpotLib implements JavaFunction {
     private int index;
     private static LuaSpotLib[] functions;
 
-    private static Vector ids;
-    private static Hashtable mem;
-    private static int msgCounter;
+    private static Vector ids = new Vector();
+    private static Hashtable mem = new Hashtable();
+    private static int msgCounter = 0;
 
     private static String nodeAddress = "";
 
@@ -81,11 +83,6 @@ public class LuaSpotLib implements JavaFunction {
             for (int i=0; i<NUM_FUNCTIONS; i++) {
                 functions[i] = new LuaSpotLib(i);
             }
-        }
-        if (ids == null) {
-            ids = new Vector();
-            mem = new Hashtable();
-            msgCounter = 0;
         }
     }
 
@@ -128,7 +125,8 @@ public class LuaSpotLib implements JavaFunction {
 
                     try {
                         // We send the message (UTF encoded)
-                        System.out.println("Sending data to " + address + ", len=" + data.length());
+                        System.out.println("[sender] Sending data to " + address + ", len=" + data.length());
+//                        System.out.println("[sender] data=" + data);
                         dg.reset();
                         dg.writeUTF(data);
                         dgConnection.send(dg);
@@ -182,11 +180,15 @@ public class LuaSpotLib implements JavaFunction {
         String msg = (String)callFrame.get(1);
 
         String id = getNewMessageId();
-        String maxhop = "";
-        String src = "";
+        String maxhop = DEFAULT_MAX_HOP;
+        String src = getNodeAddress();
+
+        if (nArguments >= 3) {
+            maxhop = (String)callFrame.get(2);
+        }
 
         StringBuffer sb = new StringBuffer();
-        sb.append("s router route ");
+        sb.append("c router route ");
         sb.append(id);
         sb.append(" ");
         sb.append(maxhop);
@@ -215,10 +217,14 @@ public class LuaSpotLib implements JavaFunction {
     private int addId(LuaCallFrame callFrame, int nArguments) {
         BaseLib.luaAssert(nArguments >= 1, "Not enough arguments");
         String id = (String)callFrame.get(0);
+        addId(id);
+        return 0;
+    }
+
+    public static void addId(String id) {
         synchronized (ids) {
             ids.addElement(id);
         }
-        return 0;
     }
 
     private int checkId(LuaCallFrame callFrame, int nArguments) {
@@ -253,6 +259,12 @@ public class LuaSpotLib implements JavaFunction {
         String var = (String)callFrame.get(1);
         String data = (String)callFrame.get(2);
 
+        memSet(app, var, data);
+        
+        return 0;
+    }
+
+    public static void memSet(String app, String var, String data) {
         String key = app +"_" + var;
 
         System.out.println("[luaspot] memset: key=" + key + ", data=" + data);
@@ -260,8 +272,6 @@ public class LuaSpotLib implements JavaFunction {
         synchronized (mem) {
             mem.put(key, data);
         }
-
-        return 0;
     }
 
     private int memGet(LuaCallFrame callFrame, int nArguments) {
@@ -270,18 +280,22 @@ public class LuaSpotLib implements JavaFunction {
         String app = (String)callFrame.get(0);
         String var = (String)callFrame.get(1);
 
+        callFrame.push(memGet(app, var));
+
+        return 1;
+    }
+
+    public static String memGet(String app, String var) {
         String key = app +"_" + var;
         String data = null;
+
+        System.out.println("[luaspot] memget: key=" + key + ", data=" + data);
 
         synchronized (mem) {
             data = (String)mem.get(key);
         }
 
-        System.out.println("[luaspot] memget: key=" + key + ", data=" + data);
-
-        callFrame.push(data);
-
-        return 1;
+        return data;
     }
 
     private int dispatch(LuaCallFrame callFrame, int nArguments) {
