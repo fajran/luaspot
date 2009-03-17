@@ -35,15 +35,35 @@ public class LuaSpot extends MIDlet {
         long ourAddr = RadioFactory.getRadioPolicyManager().getIEEEAddress();
         System.out.println("Our radio address = " + IEEEAddress.toDottedHex(ourAddr));
 
+        {
+            for (int i=0; i<8; i++) {
+                leds[i].setRGB(255, 0, 0);
+                leds[i].setOn();
+            }
+        }
+
         LuaSpotLib.setNodeAddress(IEEEAddress.toDottedHex(ourAddr));
 
         ServiceProvider sp = ServiceProvider.getInstance();
         ManagerService manager = sp.getManagerService();
+        
         manager.install("router", new String(router));
-
         manager.install("who", new String(who));
 
+        {
+            for (int i=0; i<8; i++) {
+                leds[i].setRGB(0, 255, 0);
+            }
+        }
+
         startReceiverThread();
+
+        {
+            Utils.sleep(1000);
+            for (int i=0; i<8; i++) {
+                leds[i].setOff();
+            }
+        }
 
 //        LuaSpotLib.send("broadcast", "c who blink");
 
@@ -56,14 +76,22 @@ public class LuaSpot extends MIDlet {
 //        int i, len = newapp.length;
 //        System.out.println("Total segments: " + len);
 //        for (i=0; i<len; i++) {
+//            leds[i].setOn();
+//            leds[i].setRGB(255, 255, 0);
 //            System.out.println("segment: " + i);
-//            LuaSpotLib.send("broadcast", "c manager install newapp " + i + " " + (len-1) + " " + (new String(newapp[i])));
+//            LuaSpotLib.send("7F00.0101.0000.1003", "c manager install newapp " + i + " " + (len-1) + " " + (new String(newapp[i])));
+//            int sum=0;
+//            for (int j=0; j<newapp[i].length; j++) {
+//                sum = (sum + newapp[i][j]) % 16777216;
+//            }
+//            Utils.sleep(1000);
+//            System.out.println("checksum[" + i+"] = " + sum);
+//            LuaSpotLib.send("broadcast", "c debug msg ls sum " + i + " " + sum);
+//            leds[i].setRGB(255, 255, 255);
 //            Utils.sleep(5000);
 //        }
-
+//
 //        LuaSpotLib.send("broadcast", "c newapp blink");
-
-
 
 //        System.out.println("Hello, world");
 //        new BootloaderListener().start();   // monitor the USB (if connected) and recognize commands from host
@@ -158,7 +186,9 @@ public class LuaSpot extends MIDlet {
                     try {
                         dg.reset();
                         dgConnection.receive(dg);
-                        final String data = dg.readUTF();
+                        byte[] bdata = new byte[dg.getLength()];
+                        dg.readFully(bdata);
+                        final String data = new String(bdata);
                         final String con_addr = dg.getAddress();
 
                         System.out.println("New connection from: " + con_addr);

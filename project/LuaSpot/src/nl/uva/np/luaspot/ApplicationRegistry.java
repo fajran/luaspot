@@ -41,7 +41,15 @@ public class ApplicationRegistry {
             synchronized (apps) {
                 StringBuffer sb = (StringBuffer)apps.get(name);
                 sb.append(data);
-                System.out.println("[appreg] update: app=" + name + ", len=" + data.length());
+
+                StringBuffer sbd = new StringBuffer(data);
+                int i;
+                int sum = 0;
+                for (i=0; i<sbd.length(); i++) {
+                     sum = (sum + (byte)sbd.charAt(i)) % 16777216;
+                }
+
+                System.out.println("[appreg] update: app=" + name + ", len=" + data.length() + ", sum=" + sum);
             }
         }
     }

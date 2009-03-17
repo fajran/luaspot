@@ -90,11 +90,11 @@ public class LuaSpotLib implements JavaFunction {
         nodeAddress = address;
     }
 
-    private static String getNodeAddress() {
+    public static String getNodeAddress() {
         return nodeAddress;
     }
 
-    private synchronized static String getNewMessageId() {
+    public synchronized static String getNewMessageId() {
         return getNodeAddress() + (msgCounter++);
     }
 
@@ -128,7 +128,14 @@ public class LuaSpotLib implements JavaFunction {
                         System.out.println("[sender] Sending data to " + address + ", len=" + data.length());
 //                        System.out.println("[sender] data=" + data);
                         dg.reset();
-                        dg.writeUTF(data);
+
+                        char[] cdata = data.toCharArray();
+                        byte[] bdata = new byte[cdata.length];
+                        for (int i=0; i<cdata.length; i++) {
+                            bdata[i] = (byte)cdata[i];
+                        }
+
+                        dg.write(bdata);
                         dgConnection.send(dg);
                         dgConnection.close();
                         System.out.println("sent.");

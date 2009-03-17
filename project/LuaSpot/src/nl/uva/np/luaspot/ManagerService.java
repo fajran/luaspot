@@ -5,7 +5,9 @@
 
 package nl.uva.np.luaspot;
 
-import se.krka.kahlua.vm.LuaState;
+import com.sun.spot.sensorboard.EDemoBoard;
+import com.sun.spot.sensorboard.peripheral.ITriColorLED;
+import com.sun.spot.util.Utils;
 
 /**
  *
@@ -13,10 +15,12 @@ import se.krka.kahlua.vm.LuaState;
  */
 public class ManagerService {
 
+    private ITriColorLED [] leds = EDemoBoard.getInstance().getLEDs();
+
     public ManagerService() {
     }
 
-    public void call(String func, String param) {
+    public void call(String addr, String func, String param) {
         System.out.println("[manager] function=" + func);
         if ("install".equals(func)) {
             StringBuffer sb = new StringBuffer(param);
@@ -32,6 +36,20 @@ public class ManagerService {
 
             if (segment == lastSegment) {
                 finalize(app);
+
+                for (int i=0; i<8; i++) {
+                    leds[i].setRGB(0, 0, 255);
+                    leds[i].setOn();
+                }
+                Utils.sleep(2000);
+                for (int i=0; i<8; i++) {
+                    leds[i].setRGB(255, 255, 0);
+                    leds[i].setOff();
+                }
+            }
+            else {
+                leds[segment % 8].setRGB(255, 255, 0);
+                leds[segment % 8].setOn();
             }
         }
         else if ("remove".equals(func)) {

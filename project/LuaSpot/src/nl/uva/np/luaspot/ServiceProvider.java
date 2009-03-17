@@ -52,7 +52,10 @@ public class ServiceProvider {
             System.out.println("app=" + app + ", func=" + func + ", param len=" + sb.length());
 
             if ("manager".equals(app)) {
-                manager.call(func, sb.toString());
+                manager.call(src, func, sb.toString());
+            }
+            else if ("debug".equals(app)) {
+                return;
             }
             else {
 
