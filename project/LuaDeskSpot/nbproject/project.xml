@@ -4,7 +4,7 @@
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
             <!--Do not use Project Properties customizer when editing this file manually.-->
-            <name>NetbeansSpotHostApplication</name>
+            <name>LuaDeskSpot</name>
             <properties>
                 <property-file>${user.home}/.sunspot.properties</property-file>
                 <property-file>build.properties</property-file>
@@ -78,7 +78,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">${hostagent.compile.classpath}</classpath>
+                <classpath mode="compile">/home/iang/apps/netbeans-6.5/platform9/modules/ext/swing-layout-1.0.3.jar:/home/iang/apps/netbeans-6.5/java2/modules/ext/AbsoluteLayout.jar:/home/iang/apps/SunSPOT/sdk/lib/multihop_common.jar:/home/iang/apps/SunSPOT/sdk/lib/spotlib_host.jar:/home/iang/apps/SunSPOT/sdk/lib/spotlib_common.jar:/home/iang/apps/SunSPOT/sdk/lib/squawk_common.jar:/home/iang/apps/SunSPOT/sdk/lib/RXTXcomm.jar:/home/iang/apps/SunSPOT/sdk/lib/spotclient_host.jar:/home/iang/apps/SunSPOT/sdk/lib/signing_host.jar:	:libs/prefuse.jar</classpath>
                 <built-to>build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
