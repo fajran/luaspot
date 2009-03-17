@@ -191,7 +191,7 @@ public class LuaSpotLib implements JavaFunction {
         String src = getNodeAddress();
 
         if (nArguments >= 3) {
-            maxhop = (String)callFrame.get(2);
+            maxhop = "" + (int)(((Double)callFrame.get(2)).doubleValue());
         }
 
         StringBuffer sb = new StringBuffer();
