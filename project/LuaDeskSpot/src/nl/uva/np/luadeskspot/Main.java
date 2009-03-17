@@ -92,8 +92,13 @@ public class Main extends javax.swing.JFrame {
                         final String data = new String(bdata);
                         final String con_addr = dg.getAddress();
 
+                        int sum=0;
+                        for (int i=0; i<bdata.length; i++) {
+                            sum = (sum + bdata[i]) % 16777216;
+                        }
+
                         logMonitor("New connection from: " + con_addr);
-                        logMonitor("Received: data.len=" + data.length() + " from " + con_addr);
+                        logMonitor("Received: data.len=" + data.length() + " from " + con_addr + " sum=" + sum);
                         
                         processMessage(con_addr, data);
                     } catch (IOException e) {
@@ -132,6 +137,8 @@ public class Main extends javax.swing.JFrame {
     }
 
     private void processMessage(String addr, String data) {
+        System.out.println("Incoming message: " + data);
+        
         StringBuffer sb = new StringBuffer(data);
         if ("c".equals(getNextToken(sb, true))) {
             String app = getNextToken(sb, true);
@@ -140,6 +147,15 @@ public class Main extends javax.swing.JFrame {
             if ("demo".equals(app)) {
                 if ("pong".equals(func)) {
                     log(txtMonitorPing, "Ping response from " + addr);
+                }
+                else if ("connection".equals(func)) {
+                    String src = addr;
+                    String dst = getNextToken(sb, true);
+                    logMonitor("Connection: " + src + " - " + dst);
+                    addEdge(src, dst);
+                }
+                else if ("add".equals(func)) {
+                    
                 }
             }
             else if ("router".equals(app)) {
@@ -154,14 +170,9 @@ public class Main extends javax.swing.JFrame {
                     }
                 }
             }
-            else if ("demo".equals(app)) {
-                if ("connection".equals(func)) {
-                    String src = addr;
-                    String dst = getNextToken(sb, true);
-                    addEdge(src, dst);
-                }
-                else if ("add".equals(func)) {
-                    
+            else if ("debug".equals(app)) {
+                if ("print".equals(func)) {
+                    log(txtDebug, "[from=" + addr + "] " + sb.toString());
                 }
             }
         }
@@ -225,6 +236,15 @@ public class Main extends javax.swing.JFrame {
                         bdata[i] = (byte)cdata[i];
                     }
 
+                    int sum=0;
+                    for (int i=0; i<bdata.length; i++) {
+                        sum = (sum + (bdata[i] & 0xFF)) % 16777216;
+                    }
+                    logMonitor("[sender] sum=" + sum);
+
+                    hexdump("Outgoing data", bdata);
+
+
                     dg.write(bdata);
                     dgConnection.send(dg);
                     dgConnection.close();
@@ -239,6 +259,16 @@ public class Main extends javax.swing.JFrame {
         }.start();
     }
 
+    public static void hexdump(String label, byte[] data) {
+        System.out.println("== hexdump ============== " + label);
+        for (int i=0; i<data.length; i++) {
+            if (i % 32 == 0) { System.out.println(); }
+            System.out.print(Integer.toHexString(data[i] & 0xFF) + " ");
+        }
+        System.out.println();
+        System.out.println("=========================");
+    }
+    
     private void logMonitor(String msg) {
         log(txtMonitor, msg);
     }
@@ -271,6 +301,7 @@ public class Main extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtAddr = new javax.swing.JTextField();
+        jButton10 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
@@ -296,10 +327,14 @@ public class Main extends javax.swing.JFrame {
         lblInstallSent = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         txtInstallName = new javax.swing.JTextField();
+        jButton11 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         panelTopology = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtDebug = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -330,6 +365,13 @@ public class Main extends javax.swing.JFrame {
 
         txtAddr.setText("broadcast");
 
+        jButton10.setText("Direct Send");
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -337,7 +379,10 @@ public class Main extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
@@ -360,7 +405,9 @@ public class Main extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(txtAddr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton10))
                 .addContainerGap(146, Short.MAX_VALUE))
         );
 
@@ -443,6 +490,8 @@ public class Main extends javax.swing.JFrame {
 
         jLabel5.setText("Address");
 
+        txtInstallAddr.setText("broadcast");
+
         jButton6.setText("Load");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -471,6 +520,13 @@ public class Main extends javax.swing.JFrame {
 
         jLabel8.setText("Name");
 
+        jButton11.setText("Send next fragment (direct)");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -485,11 +541,13 @@ public class Main extends javax.swing.JFrame {
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblInstallSent, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
-                            .addComponent(lblInstallFragments, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
-                            .addComponent(lblInstallSize, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE))
+                            .addComponent(lblInstallSent, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                            .addComponent(lblInstallFragments, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                            .addComponent(lblInstallSize, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton7))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton7)
+                            .addComponent(jButton11)))
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -535,12 +593,13 @@ public class Main extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(lblInstallFragments))
+                    .addComponent(lblInstallFragments)
+                    .addComponent(jButton11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(lblInstallSent))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Install", jPanel3);
@@ -553,6 +612,11 @@ public class Main extends javax.swing.JFrame {
         });
 
         jButton9.setText("Discover");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
 
         panelTopology.setBackground(new java.awt.Color(255, 255, 255));
         panelTopology.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -600,6 +664,29 @@ public class Main extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Topology", jPanel4);
 
+        txtDebug.setColumns(20);
+        txtDebug.setRows(5);
+        jScrollPane3.setViewportView(txtDebug);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Debug", jPanel5);
+
         jSplitPane1.setLeftComponent(jTabbedPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -634,6 +721,10 @@ public class Main extends javax.swing.JFrame {
 }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        installSendNext(false);
+    }
+    
+    private void installSendNext(boolean direct) {
         String addr = txtInstallAddr.getText();
         String app = txtInstallName.getText();
 
@@ -656,12 +747,17 @@ public class Main extends javax.swing.JFrame {
             }
             logMonitor("checksum: " + sum);
 
-            //            StringBuffer sb = new StringBuffer("c manager install "+app+" "+seg+" "+lseg+" ");
-            //            for (int i=0; i<data.length; i++) {
-            //                sb.append((char)data[i]);
-            //            }
-            String msg = "c manager install "+app+" "+seg+" "+lseg+" "+(new String(data));
-            sendRaw(addr, msg);
+            StringBuffer sb = new StringBuffer("c manager install "+app+" "+seg+" "+lseg+" ");
+            for (int i=0; i<data.length; i++) {
+                sb.append((char)(data[i] & 0xFF));
+            }
+
+            if (direct) {
+                sendRaw(addr, sb.toString());
+            }
+            else {
+                send(addr, sb.toString());
+            }
 
             installSent++;
             lblInstallSent.setText(""+installSent);
@@ -684,6 +780,13 @@ public class Main extends javax.swing.JFrame {
         try {
             FileInputStream fis = new FileInputStream(installFile);
             fis.read(installData);
+
+            int sum = 0;
+            for (int i=0; i<installData.length; i++) {
+                sum = (sum + installData[i]) % 16777216;
+            }
+            System.out.println("[install data] len=" + installData.length + ", sum=" +sum);
+            
         } catch (IOException e) {
             System.out.println(e.toString());
         }
@@ -730,13 +833,31 @@ public class Main extends javax.swing.JFrame {
         if ((msg.length() == 0) || (addr.length() == 0)) {
             JOptionPane.showMessageDialog(this, "Please enter message and address.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            sendRaw(addr, msg);
+            send(addr, msg);
         }
 }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtMsgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMsgActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_txtMsgActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        send("broadcast", "c demo discover");
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        String addr = txtPingAddr.getText();
+        if (addr.length() == 0) {
+            JOptionPane.showMessageDialog(this, "Please enter the destination address", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            String msg = "c demo ping";
+            sendRaw(addr, msg);
+        }
+    }//GEN-LAST:event_jButton10ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        installSendNext(true);
+    }//GEN-LAST:event_jButton11ActionPerformed
 
     private File installFile;
     private byte[] installData;
@@ -772,6 +893,8 @@ public class Main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -793,8 +916,10 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
@@ -803,6 +928,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel lblInstallSize;
     private javax.swing.JPanel panelTopology;
     private javax.swing.JTextField txtAddr;
+    private javax.swing.JTextArea txtDebug;
     private javax.swing.JTextField txtInstallAddr;
     private javax.swing.JTextField txtInstallFile;
     private javax.swing.JTextField txtInstallName;
