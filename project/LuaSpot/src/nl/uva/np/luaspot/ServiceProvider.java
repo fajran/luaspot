@@ -39,6 +39,15 @@ public class ServiceProvider {
 //        System.out.println("           message: " + msg);
         
         StringBuffer sb = new StringBuffer(msg);
+
+
+        int sum=0;
+        for (int i=0; i<sb.length(); i++) {
+            sum = (sum + (int)sb.charAt(i)) % 16777216;
+        }
+        System.out.println("[dispatch] len=" + sb.length() + ", sum=" + sum);
+
+
         String type = Util.getNextToken(sb, true);
 
         System.out.println("type=" + type);

@@ -32,6 +32,13 @@ public class ManagerService {
                 prepare(app);
             }
 
+            if (segment % 8 == 0) {
+                for (int i=0; i<8; i++) {
+                    leds[i].setRGB(0, 0, 0);
+                    leds[i].setOff();
+                }
+            }
+
             update(app, sb.toString());
 
             if (segment == lastSegment) {

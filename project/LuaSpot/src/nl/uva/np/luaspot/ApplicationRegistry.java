@@ -39,6 +39,12 @@ public class ApplicationRegistry {
         }
         if ((ready != null) && !ready.booleanValue()) {
             synchronized (apps) {
+//
+//                {
+//                    byte[] bdata = data.getBytes();
+//                    LuaSpot.hexdump("Incoming application: update", bdata);
+//                }
+
                 StringBuffer sb = (StringBuffer)apps.get(name);
                 sb.append(data);
 
@@ -97,9 +103,20 @@ public class ApplicationRegistry {
     }
 
     private static void install(LuaState state, String app, String data) throws IOException {
-        System.out.println("[appreg] register: app=" + app + ", len=" + data.length());
-        DataInputStream is = new DataInputStream(new ByteArrayInputStream(data.getBytes()));
-        LuaClosure closure = LuaPrototype.loadByteCode(is, state.getEnvironment());
-        state.call(closure, null, null, null);
+        try {
+            byte[] bdata = data.getBytes();
+            int sum = 0;
+            for (int i=0; i<bdata.length; i++) {
+                sum = (sum + bdata[i]) % 16777216;
+            }
+            System.out.println("[appreg] register: app=" + app + ", len=" + data.length() + ", sum=" + sum);
+            
+            DataInputStream is = new DataInputStream(new ByteArrayInputStream(data.getBytes()));
+            LuaClosure closure = LuaPrototype.loadByteCode(is, state.getEnvironment());
+            state.call(closure, null, null, null);
+        }
+        catch (RuntimeException e) {
+            System.out.println("[appreg] register EXCEPTION: app=" + app + ", len=" + data.length() + ", msg="+e.toString());
+        }
     }
 }

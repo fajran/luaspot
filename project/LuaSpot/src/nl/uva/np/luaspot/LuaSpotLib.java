@@ -135,6 +135,13 @@ public class LuaSpotLib implements JavaFunction {
                             bdata[i] = (byte)cdata[i];
                         }
 
+                        int sum=0;
+                        for (int i=0; i<bdata.length; i++) {
+                            sum = (sum + bdata[i]) % 16777216;
+                        }
+                        System.out.println("[sender] sum=" + sum);
+
+
                         dg.write(bdata);
                         dgConnection.send(dg);
                         dgConnection.close();

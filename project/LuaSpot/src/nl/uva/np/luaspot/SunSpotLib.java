@@ -56,7 +56,7 @@ public class SunSpotLib implements JavaFunction {
         names[LED_RGB] = "led_rgb";
 
         names[TEMP_RAW] = "temp_raw";
-        names[TEMP_CELCIUS] = "temp_ceclcius";
+        names[TEMP_CELCIUS] = "temp_celcius";
         names[TEMP_FAHRENHEIT] = "temp_fahrenheit";
 
         names[ACCEL_X] = "accel_x";
@@ -80,11 +80,13 @@ public class SunSpotLib implements JavaFunction {
     public static void register(LuaState state) {
         initFunctions();
         LuaTable sunspot = new LuaTable();
-        state.getEnvironment().rawset("sunspot", sunspot);
         
         for (int i=0; i<NUM_FUNCTIONS; i++) {
             sunspot.rawset(names[i], functions[i]);
         }
+
+        state.getEnvironment().rawset("sunspot", sunspot);
+
     }
 
     private static synchronized void initFunctions() {
