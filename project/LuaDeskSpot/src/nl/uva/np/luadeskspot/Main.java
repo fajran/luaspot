@@ -137,7 +137,8 @@ public class Main extends javax.swing.JFrame {
     }
 
     private void processMessage(String addr, String data) {
-        System.out.println("Incoming message: " + data);
+//        System.out.println("Incoming message: " + data);
+        log(txtSniffer, "[" + addr + "] " + data);
         
         StringBuffer sb = new StringBuffer(data);
         if ("c".equals(getNextToken(sb, true))) {
@@ -335,6 +336,9 @@ public class Main extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtDebug = new javax.swing.JTextArea();
+        jPanel6 = new javax.swing.JPanel();
+        jScrollPane = new javax.swing.JScrollPane();
+        txtSniffer = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -687,6 +691,29 @@ public class Main extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Debug", jPanel5);
 
+        txtSniffer.setColumns(20);
+        txtSniffer.setRows(5);
+        jScrollPane.setViewportView(txtSniffer);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Sniffer", jPanel6);
+
         jSplitPane1.setLeftComponent(jTabbedPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -917,6 +944,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -936,6 +965,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JTextArea txtMonitorPing;
     private javax.swing.JTextField txtMsg;
     private javax.swing.JTextField txtPingAddr;
+    private javax.swing.JTextArea txtSniffer;
     // End of variables declaration//GEN-END:variables
 
     private Visualization vis;
