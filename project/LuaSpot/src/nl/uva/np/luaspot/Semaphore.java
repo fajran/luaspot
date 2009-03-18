@@ -12,13 +12,14 @@ package nl.uva.np.luaspot;
 public class Semaphore {
 
     private boolean free = true;
-    private Object lock = new Object();
 
     public void get() {
         while (true) {
             if (!free) {
                 try {
-                    lock.wait();
+                    synchronized (this) {
+                        wait();
+                    }
                 }
                 catch (InterruptedException e) {
                 }
@@ -36,7 +37,12 @@ public class Semaphore {
     public void release() {
         synchronized (this) {
             free = true;
-            lock.notifyAll();
+            try {
+                notifyAll();
+            }
+            catch (IllegalMonitorStateException e) {
+                System.out.println("[semaphore] release EXCEPTION: " + e.toString());
+            }
         }
     }
     

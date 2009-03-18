@@ -287,7 +287,7 @@ public class LuaSpotLib implements JavaFunction {
     public static void memSet(String app, String var, Object data) {
         String key = app +"_" + var;
 
-        System.out.println("[luaspot] memset: key=" + key + ", data.hash=" + data.hashCode());
+        System.out.println("[luaspot] memset: key=" + key + ", data=" + data);
 
         synchronized (mem) {
             mem.put(key, data);
@@ -313,7 +313,7 @@ public class LuaSpotLib implements JavaFunction {
             data = mem.get(key);
         }
 
-        System.out.println("[luaspot] memget: key=" + key + ", data.hash=" + data.hashCode());
+        System.out.println("[luaspot] memget: key=" + key + ", data.hash=" + data);
 
         return data;
     }
