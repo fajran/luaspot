@@ -846,11 +846,11 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        String addr = txtPingAddr.getText();
-        if (addr.length() == 0) {
-            JOptionPane.showMessageDialog(this, "Please enter the destination address", "Error", JOptionPane.ERROR_MESSAGE);
+        String msg = txtMsg.getText();
+        String addr = txtAddr.getText();
+        if ((msg.length() == 0) || (addr.length() == 0)) {
+            JOptionPane.showMessageDialog(this, "Please enter message and address.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            String msg = "c demo ping";
             sendRaw(addr, msg);
         }
     }//GEN-LAST:event_jButton10ActionPerformed
