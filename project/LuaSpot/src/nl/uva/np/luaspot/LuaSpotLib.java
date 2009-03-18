@@ -63,6 +63,8 @@ public class LuaSpotLib implements JavaFunction {
 
     private static Vector ids = new Vector();
     private static Hashtable mem = new Hashtable();
+    private static Hashtable locks = new Hashtable();
+    private static Object locksLock = new Object();
     private static int msgCounter = 0;
 
     private static String nodeAddress = "";
@@ -184,6 +186,10 @@ public class LuaSpotLib implements JavaFunction {
                 return dispatch(callFrame, nArguments);
             case NEXT_TOKEN:
                 return nextToken(callFrame, nArguments);
+            case LOCK:
+                return lock(callFrame, nArguments);
+            case UNLOCK:
+                return unlock(callFrame, nArguments);
         }
         return 0;
     }
@@ -271,17 +277,17 @@ public class LuaSpotLib implements JavaFunction {
 
         String app = (String)callFrame.get(0);
         String var = (String)callFrame.get(1);
-        String data = (String)callFrame.get(2);
+        Object data = callFrame.get(2);
 
         memSet(app, var, data);
         
         return 0;
     }
 
-    public static void memSet(String app, String var, String data) {
+    public static void memSet(String app, String var, Object data) {
         String key = app +"_" + var;
 
-        System.out.println("[luaspot] memset: key=" + key + ", data=" + data);
+        System.out.println("[luaspot] memset: key=" + key + ", data.hash=" + data.hashCode());
 
         synchronized (mem) {
             mem.put(key, data);
@@ -299,15 +305,15 @@ public class LuaSpotLib implements JavaFunction {
         return 1;
     }
 
-    public static String memGet(String app, String var) {
+    public static Object memGet(String app, String var) {
         String key = app +"_" + var;
-        String data = null;
-
-        System.out.println("[luaspot] memget: key=" + key + ", data=" + data);
+        Object data = null;
 
         synchronized (mem) {
-            data = (String)mem.get(key);
+            data = mem.get(key);
         }
+
+        System.out.println("[luaspot] memget: key=" + key + ", data.hash=" + data.hashCode());
 
         return data;
     }
@@ -338,6 +344,39 @@ public class LuaSpotLib implements JavaFunction {
             callFrame.push(str.substring(pos+1));
         }
         return 2;
+    }
+
+    private int lock(LuaCallFrame callFrame, int nArguments) {
+        BaseLib.luaAssert(nArguments >= 1, "Not enough arguments");
+        String key = (String)callFrame.get(0);
+
+        Semaphore lock = null;
+        synchronized (locksLock) {
+            lock = (Semaphore)locks.get(key);
+            if (lock == null) {
+                lock = new Semaphore();
+                locks.put(key, lock);
+            }
+        }
+
+        lock.get();
+
+        return 0;
+    }
+
+    private int unlock(LuaCallFrame callFrame, int nArguments) {
+        BaseLib.luaAssert(nArguments >= 1, "Not enough arguments");
+        String key = (String)callFrame.get(0);
+
+        Semaphore lock = null;
+        
+        synchronized (locksLock) {
+            lock = (Semaphore)locks.get(key);
+        }
+
+        lock.release();
+
+        return 0;
     }
 
 }
