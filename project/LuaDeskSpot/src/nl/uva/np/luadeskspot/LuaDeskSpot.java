@@ -984,8 +984,10 @@ public class LuaDeskSpot extends javax.swing.JFrame {
 }//GEN-LAST:event_jButton9ActionPerformed
 
     private void panelTopologyComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_panelTopologyComponentResized
-        display.setSize(panelTopology.getSize());
-        repaintGraph();
+        if (display != null) {
+            display.setSize(panelTopology.getSize());
+            repaintGraph();
+        }
 }//GEN-LAST:event_panelTopologyComponentResized
 
     /**
