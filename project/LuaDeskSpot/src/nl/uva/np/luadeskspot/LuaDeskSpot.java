@@ -131,22 +131,17 @@ public class LuaDeskSpot extends javax.swing.JFrame {
         char[] chars = new char[len];
         sb.getChars(0, len, chars, 0);
 
-//        System.out.println("getToken: prev=[" + sb.toString() + "]");
         if (delete) {
-//            System.out.println("getToken: delete 0-" + len);
             sb.delete(0, len);
             if (sb.length() > 0) {
                 sb.delete(0, 1);
             }
         }
-//        System.out.println("getToken: prev=[" + sb.toString() + "]");
-
 
         return new String(chars);
     }
 
     private void processMessage(String addr, String data) {
-//        System.out.println("Incoming message: " + data);
         log(txtSniffer, "[" + addr + "] " + data);
 
         StringBuffer sb = new StringBuffer(data);
@@ -235,9 +230,7 @@ public class LuaDeskSpot extends javax.swing.JFrame {
                 }
 
                 try {
-                    // We send the message (UTF encoded)
                     logMonitor("[sender] Sending data to " + address + ", len=" + data.length());
-//                        System.out.println("[sender] data=" + data);
                     dg.reset();
 
                     char[] cdata = data.toCharArray();
@@ -253,7 +246,6 @@ public class LuaDeskSpot extends javax.swing.JFrame {
                     logMonitor("[sender] sum=" + sum);
 
                     hexdump("Outgoing data", bdata);
-
 
                     dg.write(bdata);
                     dgConnection.send(dg);
