@@ -20,9 +20,9 @@ import se.krka.kahlua.vm.LuaTable;
  * For example:
  *
  * <pre><code>-- This is a Lua script to acquire a synchronization lock
- * luaspot.lock()</code></pre>
+ *luaspot.lock()</code></pre>
  *
- * <p>Provided functions:
+ * <p>Available functions:
  *
  * <ul>
  * <li><code>send(dst, msg)</code>: Send a message <code>msg</code> to
@@ -52,6 +52,11 @@ import se.krka.kahlua.vm.LuaTable;
  *     string <code>str</code> and delete the token if <code>del</code> is
  *     set to true
  * </ul>
+ *
+ * <p>The table <code>luaspot</code> also has one variable that contains
+ * the address of sender node. This address can be retrieved by using
+ * <code>luaspot.sender</code> variable.
+ * 
  */
 public class LuaSpotLib implements JavaFunction {
 

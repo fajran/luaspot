@@ -20,9 +20,9 @@ import se.krka.kahlua.vm.LuaTable;
  * For example:
  *
  * <pre><code>-- This is a Lua script to set the first led color to yellow
- * sunspot.led_rgb(0, 255, 255, 0)</code></pre>
+ *sunspot.led_rgb(0, 255, 255, 0)</code></pre>
  *
- * <p>Provided functions:
+ * <p>Available functions:
  *
  * <ul>
  * <li><code>led_on(i)</code>: Turn on a LED with index <code>i</code>
