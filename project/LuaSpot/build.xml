@@ -101,9 +101,9 @@
     <target depends="init" name="javadoc">
         <delete dir="doc"/>
         <mkdir dir="doc"/>
-        <javadoc author="true" destdir="doc" doctitle="My Project -- SPOT-side (Version 1.0)" packagenames="org.sunspotworld.demo" sourcepath="src" windowtitle="My Project -- SPOT-side v1.0">
+        <javadoc author="true" destdir="doc" doctitle="Lua SPOT (Version 1.0)" packagenames="nl.uva.np.luaspot,se.krka.kahlua.stdlib,se.krka.kahlua.test,se.krka.kahlua.vm" sourcepath="src" windowtitle="Lua SPOT v1.0">
 	    <classpath path="${sunspot.classpath}:${sunspot.bootclasspath}"/>
-            <header><![CDATA[<b>My Project -- SPOT-side<br>v1.0</b>]]></header>
+            <header><![CDATA[<b>Lua SPOT<br>v1.0</b>]]></header>
         </javadoc>
     </target>
 
