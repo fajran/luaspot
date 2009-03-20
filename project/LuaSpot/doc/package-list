@@ -1,1 +1,4 @@
 nl.uva.np.luaspot
+se.krka.kahlua.stdlib
+se.krka.kahlua.test
+se.krka.kahlua.vm
