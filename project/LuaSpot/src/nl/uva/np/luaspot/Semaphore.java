@@ -1,18 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package nl.uva.np.luaspot;
 
 /**
- *
- * @author iang
+ * A simple semaphore object that can be used to guard a critical section
+ * from execution of multiple threads at the same time. Calling the get()
+ * method will activate the semaphore so all other threads that try to call
+ * the get() function will wait() until the thread that acquire the get() 
+ * release the lock by calling release().
+ * 
+ * <p>Keep in mind that a get() invocation should be paired with a release()
+ * call.
  */
 public class Semaphore {
 
     private boolean free = true;
 
+    /**
+     * Acquire the lock. If the lock is already acquired by a thread, other
+     * threads will get blocked until that thread release the lock. In this
+     * case, the first thread can proceed to the critical section and run
+     * the code safely.
+     */
     public void get() {
         while (true) {
             if (!free) {
@@ -33,7 +41,11 @@ public class Semaphore {
             }
         }
     }
-    
+
+    /**
+     * Release the acquired lock. This should be called after executing a
+     * critical section.
+     */
     public void release() {
         synchronized (this) {
             free = true;

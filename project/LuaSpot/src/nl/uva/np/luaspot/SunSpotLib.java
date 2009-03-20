@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package nl.uva.np.luaspot;
 
@@ -18,8 +14,34 @@ import se.krka.kahlua.vm.LuaState;
 import se.krka.kahlua.vm.LuaTable;
 
 /**
+ * Sun SPOT API for Lua script. This API contains functions that are
+ * provided by Sun SPOT. All functions will be placed under <code>sunspot</code>
+ * table, so they have to be called by using <code>sunspot.</code> prefix.
+ * For example:
  *
- * @author iang
+ * <pre><code>-- This is a Lua script to set the first led color to yellow
+ * sunspot.led_rgb(0, 255, 255, 0)</code></pre>
+ *
+ * <p>Provided functions:
+ *
+ * <ul>
+ * <li><code>led_on(i)</code>: Turn on a LED with index <code>i</code>
+ * <li><code>led_off(i)</code>: Turn off a LED with index <code>i</code>
+ * <li><code>led_rgb(i, r, g, b)</code>: Set color LED with index <code>i</code>
+ *     to the color with RGB value of <code>r</code>, <code>g</code>, and
+ *     <code>b</code>
+ * <li><code>temp_raw()</code>: Get raw temperature value
+ * <li><code>temp_celcius()</code>: Get temperature value in Celcius
+ * <li><code>temp_fahrenheit()</code>: Get temperature value in Fahrenheit
+ * <li><code>accel_x()</code>: Get accelerometer value in X axis
+ * <li><code>accel_y()</code>: Get accelerometer value in Y axis
+ * <li><code>accel_z()</code>: Get accelerometer value in Z axis
+ * <li><code>accel_relx()</code>: Get relative accelerometer value in X axis
+ * <li><code>accel_rely()</code>: Get relative accelerometer value in Y axis
+ * <li><code>accel_relz()</code>: Get relative accelerometer value in Z axis
+ * <li><code>accel_rest()</code>: Set the base of relative accelerometer value
+ * <li><code>sleep(n)</code>: Sleep (suspend the thread) for <code>n</code ms
+ * </ul>
  */
 public class SunSpotLib implements JavaFunction {
 
@@ -48,9 +70,15 @@ public class SunSpotLib implements JavaFunction {
     private static final int SLEEP = 13;
 
     private static String[] names;
-    
+
+    /*
+     * List of functions that can be accessed from Lua script. All function
+     * is under "sunspot" table, hence prefix the function by "sunspot."
+     * in order to use it.
+     */
     static {
         names = new String[NUM_FUNCTIONS];
+        
         names[LED_ON] = "led_on";
         names[LED_OFF] = "led_off";
         names[LED_RGB] = "led_rgb";
@@ -73,10 +101,21 @@ public class SunSpotLib implements JavaFunction {
     private int index;
     private static SunSpotLib[] functions;
 
+    /**
+     * Create a Lua function handler in Java for function with index specified
+     * in the parameter.
+     *
+     * @param index The function index that is handled by this object
+     */
     public SunSpotLib(int index) {
         this.index = index;
     }
 
+    /**
+     * Register all function to the Lua virtual machine given in the parameter.
+     *
+     * @param state The Lua virtual machine state
+     */
     public static void register(LuaState state) {
         initFunctions();
         LuaTable sunspot = new LuaTable();

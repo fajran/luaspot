@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package nl.uva.np.luaspot;
 
 import java.io.ByteArrayInputStream;
@@ -12,17 +9,25 @@ import se.krka.kahlua.vm.LuaPrototype;
 import se.krka.kahlua.vm.LuaState;
 
 /**
- *
- * @author iang
+ * This class contains the Lua standard library functions.
  */
 public class LuaStdLib {
 
+    /**
+     * Register the standard library to the given Lua virtual machine state.
+     * 
+     * @param state Lua virtual machine state
+     * @throws java.io.IOException
+     */
     public static void register(LuaState state) throws IOException {
         DataInputStream is = new DataInputStream(new ByteArrayInputStream(STDLIB_DATA));
         LuaClosure closure = LuaPrototype.loadByteCode(is, state.getEnvironment());
         state.call(closure, null, null, null);
     }
 
+    /**
+     * Binary code of Lua standard library.
+     */
     public static final byte[] STDLIB_DATA = {
         (byte) 0x1b, (byte) 0x4c, (byte) 0x75, (byte) 0x61, (byte) 0x51, (byte) 0x00,
         (byte) 0x01, (byte) 0x04, (byte) 0x04, (byte) 0x04, (byte) 0x08, (byte) 0x00,

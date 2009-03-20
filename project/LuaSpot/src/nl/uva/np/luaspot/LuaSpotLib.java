@@ -5,13 +5,8 @@
 
 package nl.uva.np.luaspot;
 
-import com.sun.spot.util.Utils;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.microedition.io.Connector;
-import javax.microedition.io.Datagram;
-import javax.microedition.io.DatagramConnection;
 import se.krka.kahlua.stdlib.BaseLib;
 import se.krka.kahlua.vm.JavaFunction;
 import se.krka.kahlua.vm.LuaCallFrame;
@@ -19,8 +14,44 @@ import se.krka.kahlua.vm.LuaState;
 import se.krka.kahlua.vm.LuaTable;
 
 /**
+ * Lua SPOT API for Lua script. This API contains functions that are
+ * provided by Lua SPOT. All functions will be placed under <code>luaspot</code>
+ * table, so they have to be called by using <code>luaspot.</code> prefix.
+ * For example:
  *
- * @author iang
+ * <pre><code>-- This is a Lua script to acquire a synchronization lock
+ * luaspot.lock()</code></pre>
+ *
+ * <p>Provided functions:
+ *
+ * <ul>
+ * <li><code>send(dst, msg)</code>: Send a message <code>msg</code> to
+ *     <code>dst</code> by putting the message inside a router function call.
+ * <li><code>send_raw(dst, msg)</code>: Send a raw message <code>msg</code>
+ *     to <code>dst</code>. By using this function, the message will be sent
+ *     as is without using the routing function call.
+ * <li><code>add_id(id)</code>: Insert the given <code>id</code> to the
+ *     packet identifier list.
+ * <li><code>check_id(id)</code>: Check whether the given <code>id</code> is
+ *     already in the packet identifier list.
+ * <li><code>get_new_id()</code>: Get new unique id to be used in routing
+ *     packet.
+ * <li><code>get_node_addr()</code>: Get network address of this sensor network.
+ * <li><s><code>get_pkt_src()</code></s>: Use <code>luaspot.sender</code>
+ *     instead.
+ * <li><code>mem_set(app, var, val)</code>: Save a value <code>val</code>
+ *     and use <code>app</code> and <code>var</code> as the identifier.
+ * <li><code>mem_get(app, var)</code>: Get saved value identified by
+ *     <code>app</code> and <code>var</code>.
+ * <li><code>dispatch(addr, msg)</code>: Call the <code>dispatch()</code>
+ *     function of ServiceManager and forward the <code>addr</code> and
+ *     <code>msg</code> parameters to it.
+ * <li><code>lock(app)</code>: Acquire a lock identified by <code>app</code>
+ * <li><code>release(app)</code>: Release a lock identified by <code>app</code>
+ * <li><code>next_token(str, del)</code>: Return the first token inside the
+ *     string <code>str</code> and delete the token if <code>del</code> is
+ *     set to true
+ * </ul>
  */
 public class LuaSpotLib implements JavaFunction {
 
@@ -69,6 +100,11 @@ public class LuaSpotLib implements JavaFunction {
 
     private static String nodeAddress = "";
 
+    /**
+     * Register all function to the Lua virtual machine given in the parameter.
+     *
+     * @param state The Lua virtual machine state
+     */
     public static void register(LuaState state) {
         initFunctions();
         LuaTable sunspot = new LuaTable();
@@ -88,78 +124,39 @@ public class LuaSpotLib implements JavaFunction {
         }
     }
 
+    /**
+     * Set the node address.
+     * 
+     * @param address the node address.
+     */
     public static void setNodeAddress(String address) {
         nodeAddress = address;
     }
 
+    /**
+     * Get the node address.
+     *
+     * @return the node address.
+     */
     public static String getNodeAddress() {
         return nodeAddress;
     }
 
+    /**
+     * Get new globally unique message id.
+     *
+     * @return message id
+     */
     public synchronized static String getNewMessageId() {
         return getNodeAddress() + (msgCounter++);
     }
 
-    public static Object sendLock = new Object();
-
-    public static void send(final String address, final String data) {
-
-        new Thread() {
-
-            public void run() {
-
-                synchronized (sendLock) {
-                    
-                    // We create a DatagramConnection
-                    DatagramConnection dgConnection = null;
-                    Datagram dg = null;
-
-                    try {
-                        // The Connection is a broadcast so we specify it in the creation string
-                        dgConnection = (DatagramConnection) Connector.open("radiogram://" + address + ":37");
-                        // Then, we ask for a datagram with the maximum size allowed
-                        dg = dgConnection.newDatagram(dgConnection.getMaximumLength());
-                    } catch (IOException ex) {
-                        System.out.println("Could not open radiogram connection");
-                        ex.printStackTrace();
-                        return;
-                    }
-
-                    try {
-                        // We send the message (UTF encoded)
-                        System.out.println("[sender] Sending data to " + address + ", len=" + data.length());
-//                        System.out.println("[sender] data=" + data);
-                        dg.reset();
-
-                        char[] cdata = data.toCharArray();
-                        byte[] bdata = new byte[cdata.length];
-                        for (int i=0; i<cdata.length; i++) {
-                            bdata[i] = (byte)cdata[i];
-                        }
-
-                        int sum=0;
-                        for (int i=0; i<bdata.length; i++) {
-                            sum = (sum + bdata[i]) % 16777216;
-                        }
-                        System.out.println("[sender] sum=" + sum);
-
-
-                        dg.write(bdata);
-                        dgConnection.send(dg);
-                        dgConnection.close();
-                        System.out.println("sent.");
-
-                    }
-                    catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-
-                }
-            }
-        }.start();
-    }
-
-
+    /**
+     * Create a Lua function handler in Java for function with index specified
+     * in the parameter.
+     *
+     * @param index The function index that is handled by this object
+     */
     public LuaSpotLib(int index) {
         this.index = index;
     }
@@ -219,7 +216,7 @@ public class LuaSpotLib implements JavaFunction {
         sb.append(" ");
         sb.append(msg);
 
-        send(dst, sb.toString());
+        Util.send(dst, sb.toString());
 
         return 0;
     }
@@ -229,7 +226,7 @@ public class LuaSpotLib implements JavaFunction {
         String dst = (String)callFrame.get(0);
         String msg = (String)callFrame.get(1);
 
-        send(dst, msg);
+        Util.send(dst, msg);
 
         return 0;
     }

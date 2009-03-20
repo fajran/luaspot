@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package nl.uva.np.luaspot;
 
@@ -15,69 +11,78 @@ import se.krka.kahlua.vm.LuaPrototype;
 import se.krka.kahlua.vm.LuaState;
 
 /**
- *
- * @author iang
+ * This class hold the application codes and takes care about application
+ * installation and removal to/from the memory. The ManagerServices class
+ * uses this class to store the application binaries.
  */
 public class ApplicationRegistry {
 
     public static Hashtable apps = new Hashtable();
     public static Hashtable appReady = new Hashtable();
 
+    /**
+     * Prepare a new slot to store application binary.
+     *
+     * @param name the application name
+     */
     public static void prepareApplication(String name) {
         synchronized (appReady) {
             appReady.put(name, new Boolean(false));
             apps.put(name, new StringBuffer());
-            System.out.println("[appreg] prepare: app=" + name);
         }
     }
 
+    /**
+     * Append a new partial binary segment to the existing codes in the
+     * slot.
+     *
+     * @param name the application name
+     * @param data the data that is need to be inserted
+     */
     public static void updateApplication(String name, String data) {
         Boolean ready = null;
         synchronized (appReady) {
             ready = (Boolean)appReady.get(name);
-            System.out.println("[appreg] getready: app=" + name + ", ready=" + ready);
         }
         if ((ready != null) && !ready.booleanValue()) {
             synchronized (apps) {
-//
-//                {
-//                    byte[] bdata = data.getBytes();
-//                    LuaSpot.hexdump("Incoming application: update", bdata);
-//                }
-
                 StringBuffer sb = (StringBuffer)apps.get(name);
                 sb.append(data);
-
-                StringBuffer sbd = new StringBuffer(data);
-                int i;
-                int sum = 0;
-                for (i=0; i<sbd.length(); i++) {
-                     sum = (sum + (byte)sbd.charAt(i)) % 16777216;
-                }
-
-                System.out.println("[appreg] update: app=" + name + ", len=" + data.length() + ", sum=" + sum);
             }
         }
     }
 
+    /**
+     * Set the application to final so it will be ready to be used.
+     * 
+     * @param name the application name
+     */
     public static void finalizeApplication(String name) {
         synchronized (appReady) {
             Boolean ready = (Boolean)appReady.get(name);
             if (ready != null) {
                 appReady.put(name, new Boolean(true));
-                System.out.println("[appreg] finalize: app=" + name);
             }
         }
     }
 
+    /**
+     * Remove an existing application.
+     *
+     * @param name the application name
+     */
     public static void removeApplication(String name) {
         synchronized (apps) {
-            System.out.println("[appreg] remove: app=" + name);
             apps.remove(name);
             appReady.remove(name);
         }
     }
 
+    /**
+     * Register all available applications to the Lua virtual machine.
+     * 
+     * @param state the Lua virtual machine
+     */
     public static void register(LuaState state) {
         synchronized (apps) {
             Enumeration e = apps.keys();
@@ -102,6 +107,14 @@ public class ApplicationRegistry {
         }
     }
 
+    /**
+     * Application code injection to the Lua virtual machine.
+     *
+     * @param state the Lua virtual machine
+     * @param app the application name
+     * @param data the applicatino binary vode
+     * @throws java.io.IOException
+     */
     private static void install(LuaState state, String app, String data) throws IOException {
         try {
             byte[] bdata = data.getBytes();
@@ -109,14 +122,11 @@ public class ApplicationRegistry {
             for (int i=0; i<bdata.length; i++) {
                 sum = (sum + bdata[i]) % 16777216;
             }
-            System.out.println("[appreg] register: app=" + app + ", len=" + data.length() + ", sum=" + sum);
-            
             DataInputStream is = new DataInputStream(new ByteArrayInputStream(data.getBytes()));
             LuaClosure closure = LuaPrototype.loadByteCode(is, state.getEnvironment());
             state.call(closure, null, null, null);
         }
         catch (RuntimeException e) {
-            System.out.println("[appreg] register EXCEPTION: app=" + app + ", len=" + data.length() + ", msg="+e.toString());
         }
     }
 }

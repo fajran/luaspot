@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package nl.uva.np.luaspot;
 
@@ -10,8 +6,26 @@ import com.sun.spot.sensorboard.peripheral.ITriColorLED;
 import com.sun.spot.util.Utils;
 
 /**
+ * The application manager service that handle application installation
+ * and removal.
  *
- * @author iang
+ * <p>This application has two function: <code>install</code> and
+ * <code>remove</code>.
+ *
+ * <p>The <code>install</code> function needs 4 parameters:
+ *
+ * <ol>
+ * <li>Application name.
+ * <li>The segment number, starts from zero.
+ * <li>The last segment number.
+ * <li>Application data.
+ * </ol>
+ *
+ * <p>If the segment number is zero, the application slot will be initialized.
+ * All incoming data will be appended to the slot and when the last segment
+ * comes, the applicatoin will be finalized and ready to be used.
+ *
+ * <p>Applications code are stored inside a singleton class ApplicationRegistry.
  */
 public class ManagerService {
 
@@ -20,8 +34,16 @@ public class ManagerService {
     public ManagerService() {
     }
 
+    /**
+     * A standard interface according to the RPC packet format that will be
+     * called by the dispatch() function of ServiceProvider.
+     * 
+     * @param addr The sender address
+     * @param func The function name
+     * @param param The parameter
+     */
     public void call(String addr, String func, String param) {
-        System.out.println("[manager] function=" + func);
+
         if ("install".equals(func)) {
             StringBuffer sb = new StringBuffer(param);
             String app = Util.getNextToken(sb, true);
@@ -64,15 +86,15 @@ public class ManagerService {
         }
     }
 
-    public void prepare(String app) {
+    private void prepare(String app) {
         ApplicationRegistry.prepareApplication(app);
     }
 
-    public void update(String app, String data) {
+    private void update(String app, String data) {
         ApplicationRegistry.updateApplication(app, data);
     }
 
-    public void finalize(String app) {
+    private void finalize(String app) {
         ApplicationRegistry.finalizeApplication(app);
     }
 
