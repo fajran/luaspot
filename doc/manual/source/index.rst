@@ -6,12 +6,11 @@
 Lua SPOT 1.0 Documentation
 ==========================
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
    intro
    luaspot
    luadeskspot
+   scripting
 

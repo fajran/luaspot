@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Scripting Reference &mdash; Lua SPOT v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Lua SPOT v1.0 documentation" href="index.html" />
+    <link rel="prev" title="LuaDeskSpot" href="luadeskspot.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="luadeskspot.html" title="LuaDeskSpot"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Lua SPOT v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Scripting Reference</a><ul>
+<li><a class="reference external" href="#lua-installation">Lua Installation</a></li>
+<li><a class="reference external" href="#writing-lua-script-for-lua-spot">Writing Lua Script for Lua SPOT</a></li>
+<li><a class="reference external" href="#compiling-the-script">Compiling The Script</a></li>
+<li><a class="reference external" href="#installing-the-script">Installing The Script</a></li>
+<li><a class="reference external" href="#lua-spot-apis">Lua SPOT APIs</a><ul>
+<li><a class="reference external" href="#sun-spot-api">Sun SPOT API</a></li>
+<li><a class="reference external" href="#lua-spot-api">Lua SPOT API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="luadeskspot.html"
+                                  title="previous chapter">LuaDeskSpot</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/scripting.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scripting-reference">
+<span id="scripting"></span><h1>Scripting Reference<a class="headerlink" href="#scripting-reference" title="Permalink to this headline">¶</a></h1>
+<p>Once the Lua SPOT is ready and deployed, you can add new applications to it
+by writing a Lua script. The script script is need to be compiled before
+you can actually send it to the Lua SPOT.</p>
+<div class="section" id="lua-installation">
+<h2>Lua Installation<a class="headerlink" href="#lua-installation" title="Permalink to this headline">¶</a></h2>
+<p>Lua 5.1.4 is needed to compile the Lua scripts that are going to be
+installed on the Lua SPOT. The Lua source code can be downloaded from
+<a class="reference external" href="http://www.lua.org/ftp/lua-5.1.4.tar.gz">http://www.lua.org/ftp/lua-5.1.4.tar.gz</a>. Follow the installation
+instruction inside the source code archive to install Lua on your machine.</p>
+</div>
+<div class="section" id="writing-lua-script-for-lua-spot">
+<h2>Writing Lua Script for Lua SPOT<a class="headerlink" href="#writing-lua-script-for-lua-spot" title="Permalink to this headline">¶</a></h2>
+<p>Before writing the script, you have to determine a name for your script.
+This name will also be your script identifier when installing and calling
+the script from the Lua SPOT.</p>
+<p>The script should be written according to the following standard.</p>
+<div class="highlight-lua"><table class="highlighttable"><tr><td class="linenos"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></td><td class="code"><div class="highlight"><pre><span class="n">appname</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="n">func1</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span>
+      <span class="c1">-- your code here</span>
+   <span class="k">end</span><span class="p">,</span>
+
+   <span class="n">func2</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span>
+      <span class="c1">-- your other code here</span>
+   <span class="k">end</span><span class="p">,</span>
+
+   <span class="c1">-- your other functions</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Your application name will be a new table containing all functions that you
+want to make.</p>
+<p>Functions can have one or more parameters. Lua SPOT will only pass one
+parameter, therefore if you expect more parameters, you have to split the
+parameters manually. There is a function provided by the Lua SPOT
+(<tt class="docutils literal"><span class="pre">luaspot.next_token</span></tt>) that will help you split the parameters.</p>
+<p>Lua SPOT will only send the parameter using string format. You have to
+manually convert the string to number or other format you expect if you
+don&#8217;t want to use string. For example, you can use <tt class="docutils literal"><span class="pre">tonumber()</span></tt> function
+to convert a string to a number.</p>
+</div>
+<div class="section" id="compiling-the-script">
+<h2>Compiling The Script<a class="headerlink" href="#compiling-the-script" title="Permalink to this headline">¶</a></h2>
+<p>After writing the script, you have to compile the script into the binary
+format that later can be installed to the Lua SPOT.</p>
+<p>Use the following command to compile the script.:</p>
+<div class="highlight-python"><pre>$ luac -o app.lbc app.lua</pre>
+</div>
+<p>Substitue <tt class="docutils literal"><span class="pre">app.lua</span></tt> with your script name and <tt class="docutils literal"><span class="pre">app.lbc</span></tt> will be the
+binary format of your script.</p>
+</div>
+<div class="section" id="installing-the-script">
+<h2>Installing The Script<a class="headerlink" href="#installing-the-script" title="Permalink to this headline">¶</a></h2>
+<p>The binary version of the script can be installed to the Sun SPOT (with Lua SPOT installed) using the help of LuaDeskSpot application. Follow the <a class="reference external" href="luadeskspot.html#install"><em>instruction</em></a> that has been explained earlier.</p>
+</div>
+<div class="section" id="lua-spot-apis">
+<h2>Lua SPOT APIs<a class="headerlink" href="#lua-spot-apis" title="Permalink to this headline">¶</a></h2>
+<p>In order to use facilities that are provided by Sun SPOT and Lua SPOT,
+there are several functions that can be used by the Lua script. These functions will be divided into two components, Sun SPOT and Lua SPOT API.</p>
+<div class="section" id="sun-spot-api">
+<h3>Sun SPOT API<a class="headerlink" href="#sun-spot-api" title="Permalink to this headline">¶</a></h3>
+<p>This API provides functions to access functions provided by Sun SPOT.</p>
+<ol class="arabic">
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.led_on(pos)</span></tt></p>
+<p>Turns on the LED at position <tt class="docutils literal"><span class="pre">pos</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.led_off(pos)</span></tt></p>
+<p>Turns off the LED at position <tt class="docutils literal"><span class="pre">pos</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.led_rgb(pos,</span> <span class="pre">r,</span> <span class="pre">g,</span> <span class="pre">b)</span></tt></p>
+<p>Sets the color of LED at position <tt class="docutils literal"><span class="pre">pos</span></tt> with RGB value of <tt class="docutils literal"><span class="pre">(r,</span> <span class="pre">g,</span> <span class="pre">b)</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.temp_celcius()</span></tt></p>
+<p>Returns temperature value in Celcius.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.temp_fahrenheit()</span></tt></p>
+<p>Returns temperature value in Fahrenheit.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.accel_x()</span></tt></p>
+<p>Returns the accelerometer value at x axis.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.accel_y()</span></tt></p>
+<p>Returns the accelerometer value at y axis.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.accel_z()</span></tt></p>
+<p>Returns the accelerometer value at z axis.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">sunspot.sleep(delay)</span></tt></p>
+<p>Pauses the execution for <tt class="docutils literal"><span class="pre">delay</span></tt> miliseconds.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="lua-spot-api">
+<h3>Lua SPOT API<a class="headerlink" href="#lua-spot-api" title="Permalink to this headline">¶</a></h3>
+<p>This API provides functions to access functions provided by Lua SPOT.</p>
+<ol class="arabic">
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.send(addr,</span> <span class="pre">msg)</span></tt></p>
+<p>Sends a message <tt class="docutils literal"><span class="pre">msg</span></tt> to destination address <tt class="docutils literal"><span class="pre">addr</span></tt> using the
+routing function.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.send_raw(addr,</span> <span class="pre">msg)</span></tt></p>
+<p>Sends a message <tt class="docutils literal"><span class="pre">msg</span></tt> to destination address <tt class="docutils literal"><span class="pre">addr</span></tt> directly without
+using the routing function.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.add_id(id)</span></tt></p>
+<p>This function is used to insert a new message id provided in <tt class="docutils literal"><span class="pre">id</span></tt> to
+the message id table. This table is intended to store all received
+message id so messages with duplicate id can be dropped.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.check_id(id)</span></tt></p>
+<p>Checks whether a message id is already marked as received or not.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.get_new_id()</span></tt></p>
+<p>Returns a new globally unique message id.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.get_node_addr()</span></tt></p>
+<p>Returns the node address.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.mem_set(app,</span> <span class="pre">var,</span> <span class="pre">value)</span></tt></p>
+<p>Stores a value to the persistent storage. The value <tt class="docutils literal"><span class="pre">value</span></tt> is
+identified by application name <tt class="docutils literal"><span class="pre">app</span></tt> and a variable name <tt class="docutils literal"><span class="pre">var</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.mem_get(app,</span> <span class="pre">var)</span></tt></p>
+<p>Returns a value from the persistent storage. The value is located using
+the application name <tt class="docutils literal"><span class="pre">app</span></tt> and a variable name <tt class="docutils literal"><span class="pre">var</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.dispatch(addr,</span> <span class="pre">msg)</span></tt></p>
+<p>Dispatches a new message <tt class="docutils literal"><span class="pre">msg</span></tt> from source address <tt class="docutils literal"><span class="pre">addr</span></tt> to the
+main Lua SPOT message dispatcher.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.lock(app)</span></tt></p>
+<p>Creates a global lock identified by <tt class="docutils literal"><span class="pre">app</span></tt>. Other threads that are
+trying to acquire lock with the same identifier will get blocked until
+the corresponding <tt class="docutils literal"><span class="pre">luaspot.unlock</span></tt> function called.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.unlock(app)</span></tt></p>
+<p>Releases the lock identified by <tt class="docutils literal"><span class="pre">app</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">luaspot.next_token(str)</span></tt></p>
+<p>Gets the next token inside the string <tt class="docutils literal"><span class="pre">str</span></tt>. This function returns two values, the next token and the remaining string.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="luadeskspot.html" title="LuaDeskSpot"
+             >previous</a> |</li>
+        <li><a href="index.html">Lua SPOT v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Fajran Iman Rusadi, Zheng Zhangzheng.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6b1.
+    </div>
+  </body>
+</html>
