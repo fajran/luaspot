@@ -1,0 +1,108 @@
+
+\documentclass[conference]{IEEEtran}
+
+\begin{document}
+
+\title{Scriptable Sensor Network}
+
+\author{\IEEEauthorblockN{Fajran Iman Rusadi}
+\IEEEauthorblockA{Universiteit van Amsterdam\\
+Email: frusadi@science.uva.nl}
+\and
+\IEEEauthorblockN{ZhengZhangzheng}
+\IEEEauthorblockA{Universiteit van Amsterdam\\
+Email: zzheng@science.uva.nl}}
+
+\maketitle
+
+\begin{abstract}
+Abstract 
+\end{abstract}
+
+
+
+\section{Introduction}
+
+% - sensor network
+%   - Sun SPOT
+%     -> we are going to use Sun SPOT
+% - scripting language
+%   -> what can scripting does
+%      -> dynamic execution
+% - concept of active network
+
+\section{Background}
+
+% - problems:
+%   - we want to utilize h/w resource
+%   - we want to run different applications
+%     - so we have to put the prog on the sensor network
+%     - but if we always have to do this manually, we will
+%       have difficulties in doing it: 
+%       - waste time, human resources, money, etc
+%   - so, we want to be able to deploy/install/put the app
+%     dynamically (remotely) to all sensor networks
+%   - we also want to change the network behaviour programmatically (active network)
+
+\section{Solution}
+
+% - we have a program, called Lua SPOT
+%   it can run script, Lua script, on it
+% - software architecture
+%   - sensor network as a service provider
+%   - applications are the services
+%   - invoked by an RPC
+%   - RPC message format
+%   - API
+%   - applications are equal and shared
+%     - one app can call other app's function
+% - Two basic applications
+%   - app manager
+%     - new app installation procedure
+
+
+\section{Active Network}
+
+% - we can deploy new application
+% - router is implemented as an application
+% - we can change the router behaviour programmatically
+%   - by changing the routing application
+%   - by changing a specific application that determine behavior
+%     - ex: router calls find_next_hop
+%     - we can change the find_next_hop function
+%     - and therefore the routing behaviour will change accordingly
+% - this fits the active network concept
+
+\section{Experiments}
+
+% we build a host application that uses services on the sensor networks
+% - insert new application
+% - dynamic path calculation
+%   - each sensor network measure a value
+%   - they exchange the value
+%   - they calculate the path according to the values
+%   - the path will be used as a routing path
+
+\section{Conclusion}
+
+% - we have successfully create a scriptable sensor network
+% - limitations
+%   - at the moment, lua spot doesn't care about memory consumption
+%   - 
+% - future works
+%   - handle the limitations
+%   - enrich lua spot api
+%   - 
+
+
+
+\begin{thebibliography}{1}
+
+\bibitem{IEEEhowto:kopka}
+H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+
+\end{thebibliography}
+
+\end{document}
+

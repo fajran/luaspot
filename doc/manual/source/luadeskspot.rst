@@ -1,0 +1,6 @@
+.. _luadeskspot:
+
+LuaDeskSpot
+===========
+
+
