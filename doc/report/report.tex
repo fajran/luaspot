@@ -1,5 +1,15 @@
 
+% TODO:
+% - fix image caption numbering
+
 \documentclass[conference]{IEEEtran}
+
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{pstricks}
+\usepackage{epsfig}
+\usepackage{pst-grad} % For gradients
+\usepackage{pst-plot} % For axes
 
 \begin{document}
 
@@ -31,6 +41,41 @@ Abstract
 %      -> dynamic execution
 % - concept of active network
 
+\subsection{Wireless Sensor Network}
+
+Awireless sensor network (WSN) is a wireless network consisting of spatially
+distributed autonomousdevices using sensorsto cooperatively monitor physical or
+environmental conditions, such as temperature, sound, vibration, pressure,
+motion or pollutants, at different locations \cite{wsn} This
+resource-constrained network is usually self-configured and data centric, and
+always has dynamic topology and a specific application running on it. In our
+experiments, we use SunSpots, powerful sensor devices which are easier to
+program to make a more flexible sensor network. 
+
+\subsection{Scripting Language}
+
+A scripting languageis a programming languagethat allows some control of a
+single or many software applications. Scripts are often interpreted from the
+source code or "semi-compiled" to bytecodewhich is interpreted, unlike the
+applications they are associated with, which are traditionally compiledto
+native machine code for the system on which they run. Scripting languages are
+nearly always embedded in the application with which they are associated. With
+thischaracteristicof scriptinglanguage, it can support dynamic execution fairly
+well. 
+
+\subsection{Concept of Active Network}
+
+Active networkis an architectural framework to allow extension ofnetwork
+services by users. It can support application-specific network (layer)
+servicesand programs can inject code fragments to decide how their traffic
+isprocessed by the network.The nodes of active network are programmed to
+perform custom operations on the messages that pass through the node. For
+example, a node could be programmed or customized to handle packets on an
+individual user basis or to handle multicastpackets differently than other
+packets. 
+
+% ====================================================================================
+
 \section{Background}
 
 % - problems:
@@ -43,6 +88,22 @@ Abstract
 %   - so, we want to be able to deploy/install/put the app
 %     dynamically (remotely) to all sensor networks
 %   - we also want to change the network behaviour programmatically (active network)
+
+At present, most state of the art sensor networksare designed for a single
+application. We can bear this approach on the condition that the device in the
+sensor network is not so powerful and expensive. But with the advent of more
+powerful senor devices, we want to utilize the hardware we invest in the sensor
+network to a bigger extent, hoping that it can run multiple applications in it,
+not restricted by simply measuring temperatureand humidity. Traditionally, the
+administrator of the sensor network can collect all the devices in the network
+from different locations, upgrade the firmware locally to deploy new
+applications andthen install them back. This approach is feasible but wastes
+human resources and money greatly. Spontaneouslya smarter approach which can
+dynamically install, run and removethe applications in the sensor networkhas
+been put up. This approach, which can change the behaviorof the network
+programmaticallymakes the sensor network an active network.
+
+% ====================================================================================
 
 \section{Solution}
 
@@ -60,6 +121,162 @@ Abstract
 %   - app manager
 %     - new app installation procedure
 
+To answer the problem described in the previous section, we came up with idea
+to run one or more scripts on top of the sensor network. We first run our
+native application on the sensor network and provide it a basic capabilities to
+run script on the application. The application handles the installation and
+execution of scripts so we can dynamically install and execute scripts on
+the sensor network. We call our application Lua SPOT.
+
+As implied in the name, Lua SPOT is able to run scripts written in Lua
+language. Lua is choosen because it is fairly simple yet powerful scripting
+language and it is designed as an embedded scripting language. Lua needs a
+virtual machine to be run on and we use Kahlua
+\footnote{http://code.google.com/p/kahlua/}, an open source Lua Virtual
+Machine that is written on Java langauge which can be run on top of Sun
+SPOT, the sensor network that we use.
+
+We will describe Lua SPOT in detail in the following sections.
+
+\subsection{Software Architecture}
+
+First of all, we would like to give a general overview of the building
+blocks of Lua SPOT. As shown in Figure~\ref{fig:architecture},
+generally Lua SPOT is composed of three layers including the Sun
+SPOT layer where Lua SPOT runs on. This layer is where Lua SPOT gets
+executed. It also provides APIs to use the wireless network, access sensors
+and other input/output ports that can be used by any Sun SPOT application
+that run on top of it.
+
+\begin{figure}[htbp]
+	\centering
+	\scalebox{0.9}
+	{
+	\begin{pspicture}(0,-1.5)(9.02,1.52)
+	\psframe[linewidth=0.04,dimen=outer,fillstyle=solid](9.0,1.5)(0.0,-1.5)
+	\usefont{T1}{ptm}{m}{n}
+	\rput(1.04,1.005){Manager}
+	\rput(2.89,1.005){Router}
+	\rput(4.63,1.005){App 1}
+	\rput(6.32,1.005){App ...}
+	\rput(8.05,1.005){App n}
+	\rput(1.57,0.0050){Lua SPOT}
+	\rput(6.11,0.0050){Lua VM (Kahlua)}
+	\rput(4.56,-0.995){Sun SPOT}
+	\psline[linewidth=0.04cm](2.0,1.5)(2.0,0.5)
+	\psline[linewidth=0.04cm](3.8,1.5)(3.8,0.5)
+	\psline[linewidth=0.04cm](5.4,1.5)(5.4,0.5)
+	\psline[linewidth=0.04cm](7.2,1.5)(7.2,0.5)
+	\psline[linewidth=0.04cm](0.0,0.5)(9.0,0.5)
+	\psline[linewidth=0.04cm](0.0,-0.5)(9.0,-0.5)
+	\psline[linewidth=0.04cm](3.2,0.5)(3.2,-0.5)
+	\end{pspicture} 
+	}
+	\label{fig:architecture}
+	\caption{Software Architecture}
+\end{figure}
+
+The middle layer is where Lua SPOT resides. We also put the Lua VM
+there since it will be part of Lua SPOT. This layer provides a
+script execution environment that handles scripts execution as well as
+installation and removal. APIs exposed by the Sun SPOT layer will also be
+exported to the scripts by creating function wrappers that can be called
+from Lua scripts above.
+
+% FIXME: 
+% - tells about applications and they will be written in Lua (except
+%   manager)
+Lua scripts (or application) run on the top layer and they will be the
+application logic that controls the sensor network. The scripts will be run
+on the Lua virtual machine and can use APIs that are provided by the Lua
+SPOT to access functions that are provided by Sun SPOT and the Lua SPOT
+itself.
+
+\subsection{Service Provider}
+
+In Lua SPOT, we introduce a term Service Provider. We design the sensor
+network as a service provider that provides services which can be used by
+other entities.
+
+Applications on the Lua SPOT will provide services. Functions inside each
+application can be called by other entities using some mechanism. Since the
+interaction between the functions and other entities is basically using
+function call, or remote function call to be precise, therefore an RPC like
+mechanism will be used to invoke a function inside an application.
+
+Other entities that want to access a function inside a sensor network
+should send a message that represents an RPC. For the sake of simplicity,
+we design the RPC message as shown in Figure~\ref{fig:rpc}.
+
+\begin{figure}[htbp]
+	\centering
+	\scalebox{0.8} % Change this value to rescale the drawing.
+	{
+	\begin{pspicture}(0,-0.42)(10.2,0.42)
+	\psframe[linewidth=0.04,dimen=outer,fillstyle=solid](10.2,0.4)(0.0,-0.4)
+	\usefont{T1}{ptm}{m}{n}
+	\rput(0.4,-0.015){ID}
+	\rput(2.0,0.015){Application}
+	\rput(4.2,-0.015){Function}
+	\rput(7.8,-0.0050){Parameter}
+	\psline[linewidth=0.04cm](0.8,0.4)(0.8,-0.4)
+	\psline[linewidth=0.04cm](3.2,0.4)(3.2,-0.4)
+	\psline[linewidth=0.04cm](5.2,0.4)(5.2,-0.4)
+	\end{pspicture} 
+	}
+	\label{fig:rpc}
+	\caption{RPC Message Format}
+\end{figure}
+
+It contains four fields and each field is separated by a single space. The
+first field will be the message identifier which distinguish our packet
+with any other packet. It contains a single character \texttt{c}, a short
+for "call".
+
+The second and third field will be the application and function identifier.
+At the moment, we simply use the application and function name. The last
+field is the parameter that will be supplied to the function. Multiple
+parameters will be merged into one parameter and it is the function
+responsibility to parse the parameter into multiple parameters.
+
+\subsection{Application Execution}
+
+When the connection listener in the Lua SPOT receives a message, it will
+create a new thread and pass the message to a function called
+\texttt{dispatch()} from inside the thread.  This function handles the
+initial message processing. It drops unwanted messages and extracts the
+application and function name as well as the parameter.
+
+After knowing the application and function name, the \texttt{dispatch()}
+function will create a new Lua Virtual Machine and invoke the requested
+application and function. Each new Lua Virtual Machine contains the Lua
+standard library, the Sun SPOT and Lua SPOT libraries will be described
+later, the requested application code, and all other installed
+applications.
+
+% TODO: elaborate more
+All installed applications will be available inside the Lua Virtual
+Machine. One application can call function on another application. 
+
+Since each function call is executed under a separate Lua Virtual Machine,
+this means the function call is stateless because any state will be
+destroyed once the function returns. One function execution and other
+function executions that happen at the same time can't interfere each
+other. 
+
+However, a special APIs are provided by the Lua SPOT that allow the
+applications to share a global state. This will be described in the next
+section.
+
+\subsection{Sun SPOT and Lua SPOT APIs}
+
+
+
+\subsection{Basic Applications}
+
+fsfsfsd
+
+% ====================================================================================
 
 \section{Active Network}
 
@@ -73,6 +290,8 @@ Abstract
 %     - and therefore the routing behaviour will change accordingly
 % - this fits the active network concept
 
+% ====================================================================================
+
 \section{Experiments}
 
 % we build a host application that uses services on the sensor networks
@@ -82,6 +301,41 @@ Abstract
 %   - they exchange the value
 %   - they calculate the path according to the values
 %   - the path will be used as a routing path
+
+\subsection{Topology}
+
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=8cm]{topology}
+%	\label{fig:network-topology}
+%	\caption{Network Topology}
+%\end{figure}
+
+Multiple applications will run on the host, collecting different kinds of data
+from different applications in the sensor network. And new applications can be
+selected from the host workstation to be broadcasted to install in the network.
+Different nodes in the sensor network will communicate with each other by means
+of radio connection. 
+
+\subsection{Expectation}
+
+We expect new Lua applications can be selected from host application and be
+installed in the sensor network. The Lua application will be compiled to binary
+format beforehand. And we also expect that applications can be called and
+removed when received certain messages we specify in the above section. 
+
+\subsection{Results}
+
+In our experiments, the Lua application can really be managed dynamically in
+the sensor network.  The new Lua application, which is to light on the SunSpots
+one by one in the sequence of devices¿ orientation can be deployed in the whole
+sensor network. After installing this application, a message to run this
+application from the host will make all the nodes work coordinately to finish
+this task. And a remove message can make all the nodes remove this application,
+thus this application can no longer be called. 
+
+
+% ====================================================================================
 
 \section{Conclusion}
 
@@ -98,9 +352,8 @@ Abstract
 
 \begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+\bibitem{wsn}
+http://en.wikipedia.org/wiki/Wireless\_Sensor\_Networkas
 
 \end{thebibliography}
 
