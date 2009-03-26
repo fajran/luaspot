@@ -104,8 +104,8 @@
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txtMsg" alignment="0" pref="485" max="32767" attributes="0"/>
-                                      <Component id="txtAddr" alignment="0" pref="485" max="32767" attributes="0"/>
+                                      <Component id="txtMsg" alignment="0" pref="523" max="32767" attributes="0"/>
+                                      <Component id="txtAddr" alignment="0" pref="523" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -131,7 +131,7 @@
                               <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jButton10" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="158" max="32767" attributes="0"/>
+                          <EmptySpace pref="163" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -190,11 +190,11 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane2" alignment="0" pref="549" max="32767" attributes="0"/>
+                              <Component id="jScrollPane2" alignment="0" pref="586" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txtPingAddr" pref="298" max="32767" attributes="0"/>
+                                  <Component id="txtPingAddr" pref="404" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -217,7 +217,7 @@
                               <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane2" pref="158" max="32767" attributes="0"/>
+                          <Component id="jScrollPane2" pref="172" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButton3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -300,9 +300,9 @@
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="lblInstallSent" alignment="0" pref="249" max="32767" attributes="1"/>
-                                      <Component id="lblInstallFragments" alignment="0" pref="249" max="32767" attributes="1"/>
-                                      <Component id="lblInstallSize" alignment="0" pref="249" max="32767" attributes="1"/>
+                                      <Component id="lblInstallSent" alignment="0" pref="319" max="32767" attributes="1"/>
+                                      <Component id="lblInstallFragments" alignment="0" pref="319" max="32767" attributes="1"/>
+                                      <Component id="lblInstallSize" alignment="0" pref="319" max="32767" attributes="1"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
@@ -310,7 +310,7 @@
                                       <Component id="jButton11" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="jSeparator1" alignment="0" pref="549" max="32767" attributes="0"/>
+                              <Component id="jSeparator1" alignment="0" pref="586" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                       <Component id="jLabel8" alignment="0" max="32767" attributes="1"/>
@@ -320,14 +320,14 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="txtInstallFile" pref="309" max="32767" attributes="0"/>
+                                          <Component id="txtInstallFile" pref="447" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="jButton5" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="jButton6" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="txtInstallAddr" alignment="0" pref="474" max="32767" attributes="0"/>
-                                      <Component id="txtInstallName" alignment="0" pref="474" max="32767" attributes="0"/>
+                                      <Component id="txtInstallAddr" alignment="0" pref="514" max="32767" attributes="0"/>
+                                      <Component id="txtInstallName" alignment="0" pref="514" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -374,7 +374,7 @@
                               <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="lblInstallSent" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="41" max="32767" attributes="0"/>
+                          <EmptySpace pref="68" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -541,12 +541,12 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="549" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="586" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="191" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="199" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                   </Layout>
@@ -567,7 +567,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane3" pref="549" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" pref="586" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -614,7 +614,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane" pref="549" max="32767" attributes="0"/>
+                          <Component id="jScrollPane" pref="586" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

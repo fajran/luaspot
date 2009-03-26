@@ -154,8 +154,14 @@ public class LuaDeskSpot extends javax.swing.JFrame {
                     log(txtMonitorPing, "Ping response from " + addr);
                 }
                 else if ("connection".equals(func)) {
-                    String src = addr;
-                    String dst = getNextToken(sb, true);
+                    String[] temp;
+                    
+                    temp = addr.split("\\.");
+                    String src = temp[3];
+                    
+                    temp = getNextToken(sb, true).split("\\.");
+                    String dst = temp[3];
+
                     logMonitor("Connection: " + src + " - " + dst);
                     addEdge(src, dst);
                 }
