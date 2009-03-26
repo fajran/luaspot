@@ -295,7 +295,8 @@ network.
 
 Installing a new application in Sun SPOT is just a matter of calling a
 function. A default application called Application Manager is reponsible to
-handle this kind of things. This application is written in Java and will be
+handle this kind of things. This application, which is named
+\texttt{manager}, is written in Java and will be
 the only application that is written in Java.
 
 The application has two main functions: \texttt{install} and
@@ -315,17 +316,17 @@ message structure that is expected by the \texttt{install} function.
 	\centering
 	\scalebox{0.8} % Change this value to rescale the drawing.
 	{
-	\begin{pspicture}(0,-0.9)(9.82,0.92)
-	\psframe[linewidth=0.04,dimen=outer,fillstyle=solid](9.8,0.9)(0.0,-0.9)
+	\begin{pspicture}(0,-0.9)(10.22,0.92)
+	\psframe[linewidth=0.04,dimen=outer,fillstyle=solid](10.2,0.9)(0.0,-0.9)
 	\usefont{T1}{pcr}{m}{n}
-	\rput(0.38,0.495){c}
+	\rput(0.38,0.435){c}
 	\rput(1.9,0.495){manager}
-	\rput(3.98,0.495){install}
-	\rput(5.7,0.495){name}
-	\rput(7.1,0.495){index}
-	\rput(8.7,0.495){fragments}
-	\rput(4.9,-0.385){application data}
-	\psline[linewidth=0.04cm](0.0,0.1)(9.8,0.1)
+	\rput(3.98,0.435){install}
+	\rput(5.7,0.435){name}
+	\rput(7.1,0.435){index}
+	\rput(8.9,0.435){fragments}
+	\rput(5.1,-0.385){application data}
+	\psline[linewidth=0.04cm](0.0,0.1)(10.2,0.1)
 	\psline[linewidth=0.04cm](0.8,0.9)(0.8,0.1)
 	\psline[linewidth=0.04cm](3.0,0.9)(3.0,0.1)
 	\psline[linewidth=0.04cm](5.0,0.9)(5.0,0.1)
@@ -346,6 +347,58 @@ manager will then activate the application so it is ready to be used.
 
 \subsubsection{Basic Router}
 
+When a sensor network want to send a message to another sensor network, there
+is a case when they are not within a range so the message should be
+transmitted through one or more intermediate sensor networks. In order to
+do this, a special function need to be used so an intermediate sensor
+network can receive and forward such message. This functionality is called
+routing.
+
+Lua SPOT contains an application that does routing. It receives a message
+and if the message is not sent to it, it will forward the message. The
+message will be hopped from one sensor network to the other until
+eventually it reaches the destination. If the routing application receives
+a message that is directed to it, it will remove the routing header and
+process the original message. The processing is done by calling the
+\texttt{dispatch()} function from inside application.
+
+This routing application might be very basic, but it can already be used to
+forward a message from one node to another node that are not withing a
+range. This application is implemented as a Lua script and can be replaced
+if needed.
+
+Just like the install function, routing function is implemented as another
+function that can be called. The name of application is \texttt{routing}
+and the function that will do routing is \texttt{route}. The function
+expects several parameters as shown in Figure~\ref{fig:routing}.
+
+\begin{figure}[htbp]
+	\centering
+	\scalebox{0.9} % Change this value to rescale the drawing.
+	{
+	\begin{pspicture}(0,-1.3)(8.62,1.32)
+	\psframe[linewidth=0.04,dimen=outer,fillstyle=solid](8.6,1.3)(0.0,-1.3)
+	\usefont{T1}{pcr}{m}{n}
+	\rput(0.38,0.835){c}
+	\rput(1.78,0.835){router}
+	\rput(3.56,0.835){route}
+	\rput(5.4,0.835){msg id}
+	\rput(7.48,0.835){maxhop}
+	\rput(2.38,0.0050){src addr}
+	\rput(6.38,0.0050){dst addr}
+	\rput(4.47,-0.785){nested message}
+	\psline[linewidth=0.04cm](0.0,0.5)(8.6,0.5)
+	\psline[linewidth=0.04cm](0.8,1.3)(0.8,0.5)
+	\psline[linewidth=0.04cm](2.8,1.3)(2.8,0.5)
+	\psline[linewidth=0.04cm](4.4,1.3)(4.4,0.5)
+	\psline[linewidth=0.04cm](6.4,1.3)(6.4,0.5)
+	\psline[linewidth=0.04cm](0.0,-0.3)(8.6,-0.3)
+	\psline[linewidth=0.04cm](4.4,0.5)(4.4,-0.3)
+	\end{pspicture} 
+	}
+	\label{fig:routing}
+	\caption{Router Packet Structure}
+\end{figure}
 
 
 % ====================================================================================
