@@ -270,11 +270,83 @@ section.
 
 \subsection{Sun SPOT and Lua SPOT APIs}
 
+Originally, the APIs that are available inside the Lua Virtual Machine is
+very limited. It only contains the Lua standard library so the scripts run
+on it are useless since they can only process something (the parameter)
+from the network but can't do something to the network.
 
+Therefore, a set of functions that are categorized into two APIs are
+provided: Sun SPOT and Lua SPOT APIs. The Sun SPOT API contains functions
+to access facilities provided by the Sun SPOT such as sensors and other
+input/output ports. The second API contains other functions that are
+required to make applications run on Lua SPOT more powerful, such as the
+global memory storage, synchronization, and also function to send message
+to the network.
 
 \subsection{Basic Applications}
 
-fsfsfsd
+There are two basic applications in the Lua SPOT: Application Manager and
+Basic Router. The first application is responsible for adding, removing,
+and installing new application. The second application provides a routing
+function to route a message from one sensor network to other sensor
+network. 
+
+\subsubsection{Application Manager}
+
+Installing a new application in Sun SPOT is just a matter of calling a
+function. A default application called Application Manager is reponsible to
+handle this kind of things. This application is written in Java and will be
+the only application that is written in Java.
+
+The application has two main functions: \texttt{install} and
+\texttt{remove}. The \texttt{remove} function need an application name that
+will be removed as the parameter. The \texttt{install} function needs more
+complex structure of the parameter since special care is needed when
+receiving new application data.
+
+The size of message that can be transmitted to the network in one go is
+limited. This can be considered as the MTU in the regular network.
+Since the application size can be larger than the MTU, a data fragmentation
+is needed. Therefore, the parameter of the \texttt{install} function
+contains information about fragments. Figure~\ref{fig:install} shows the
+message structure that is expected by the \texttt{install} function.
+
+\begin{figure}[htbp]
+	\centering
+	\scalebox{0.8} % Change this value to rescale the drawing.
+	{
+	\begin{pspicture}(0,-0.9)(9.82,0.92)
+	\psframe[linewidth=0.04,dimen=outer,fillstyle=solid](9.8,0.9)(0.0,-0.9)
+	\usefont{T1}{pcr}{m}{n}
+	\rput(0.38,0.495){c}
+	\rput(1.9,0.495){manager}
+	\rput(3.98,0.495){install}
+	\rput(5.7,0.495){name}
+	\rput(7.1,0.495){index}
+	\rput(8.7,0.495){fragments}
+	\rput(4.9,-0.385){application data}
+	\psline[linewidth=0.04cm](0.0,0.1)(9.8,0.1)
+	\psline[linewidth=0.04cm](0.8,0.9)(0.8,0.1)
+	\psline[linewidth=0.04cm](3.0,0.9)(3.0,0.1)
+	\psline[linewidth=0.04cm](5.0,0.9)(5.0,0.1)
+	\psline[linewidth=0.04cm](6.4,0.9)(6.4,0.1)
+	\psline[linewidth=0.04cm](7.8,0.9)(7.8,0.1)
+	\end{pspicture} 
+	}
+	\label{fig:architecture}
+	\caption{Application Installation Packet Structure}
+\end{figure}
+
+The function requires four parameters: the application name, the fragment
+index, the total fragments, and the application data. When receiving new
+install request (identified by index 0), the application manager will
+initialize new application slot in the memory. The application data is
+appended to that slot until the last fragment arrives. The application
+manager will then activate the application so it is ready to be used.
+
+\subsubsection{Basic Router}
+
+
 
 % ====================================================================================
 
