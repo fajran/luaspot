@@ -44,7 +44,8 @@
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">LuaDeskSpot</a><ul>
-<li><a class="reference external" href="#executing-luadeskspot">Executing LuaDeskSpot</a></li>
+<li><a class="reference external" href="#compilation">Compilation</a></li>
+<li><a class="reference external" href="#execution">Execution</a></li>
 <li><a class="reference external" href="#luadeskspot-modules">LuaDeskSpot Modules</a><ul>
 <li><a class="reference external" href="#raw-message-module">Raw Message Module</a></li>
 <li><a class="reference external" href="#ping-module">Ping Module</a></li>
@@ -98,9 +99,23 @@ module that will call installation service in the Lua SPOT. You can use
 this installation module to install new Lua scripts to the Lua SPOT.</p>
 <p>You will need the Sun SPOT SDK and Java 5 in order to run this application.</p>
 <img alt="_images/raw.png" src="_images/raw.png" />
-<div class="section" id="executing-luadeskspot">
-<h2>Executing LuaDeskSpot<a class="headerlink" href="#executing-luadeskspot" title="Permalink to this headline">¶</a></h2>
-<p>To run LuaDeskSpot, go to the project directory and run <tt class="docutils literal"><span class="pre">ant</span> <span class="pre">host-run</span></tt> command. You also need to plug the Sun SPOT base station first before you can run this application.:</p>
+<div class="section" id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this headline">¶</a></h2>
+<p>To compile LuaDeskSpot, go to the project directory and run <tt class="docutils literal"><span class="pre">ant</span> <span class="pre">host-compile</span></tt>.:</p>
+<div class="highlight-python"><pre>$ cd src/LuaDeskSpot
+$ ant host-compile</pre>
+</div>
+</div>
+<div class="section" id="execution">
+<h2>Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h2>
+<p>One of the way for using base station is by setting the base station to run in
+shared mode. Edit the <tt class="docutils literal"><span class="pre">.sunspot.properties</span></tt> under your home directory and
+insert two line like the following.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">basestation</span><span class="o">.</span><span class="n">shared</span><span class="o">=</span><span class="n">true</span>
+<span class="n">multi</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">basestation</span><span class="o">.</span><span class="n">sharing</span><span class="o">=</span><span class="n">true</span>
+</pre></div>
+</div>
+<p>After that, you can start using the host application by running it.:</p>
 <div class="highlight-python"><pre>$ cd src/LuaDeskSpot
 $ ant host-run</pre>
 </div>
@@ -133,7 +148,8 @@ memory. You can also see the size and number of fragments that need to be
 sent.</p>
 <p>After specifiying the destination address and the application name, you can
 start sending the install message (including the fragmented application
-binary) by clicking the Send Next Fragment button (or the direct send one). Do this multiple times until all fragments are sent.</p>
+binary) by clicking the Send Next Fragment button (or the direct send one). Do
+this multiple times until all fragments are sent.</p>
 <p>The receiving Lua SPOT should turn on a LED when it receives and
 sucessfully installed the fragmented application. All LEDs will be turned
 on with blue color if the last segment is received.</p>

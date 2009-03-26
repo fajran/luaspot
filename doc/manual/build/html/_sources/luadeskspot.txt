@@ -12,10 +12,26 @@ You will need the Sun SPOT SDK and Java 5 in order to run this application.
 
 .. image:: raw.png
 
-Executing LuaDeskSpot
----------------------
+Compilation
+-----------
 
-To run LuaDeskSpot, go to the project directory and run ``ant host-run`` command. You also need to plug the Sun SPOT base station first before you can run this application.::
+To compile LuaDeskSpot, go to the project directory and run ``ant host-compile``.::
+
+   $ cd src/LuaDeskSpot
+   $ ant host-compile
+
+
+Execution
+---------
+
+One of the way for using base station is by setting the base station to run in
+shared mode. Edit the ``.sunspot.properties`` under your home directory and
+insert two line like the following.::
+
+   basestation.shared=true
+   multi.process.basestation.sharing=true
+
+After that, you can start using the host application by running it.::
 
    $ cd src/LuaDeskSpot
    $ ant host-run
@@ -61,7 +77,8 @@ sent.
 
 After specifiying the destination address and the application name, you can
 start sending the install message (including the fragmented application
-binary) by clicking the Send Next Fragment button (or the direct send one). Do this multiple times until all fragments are sent.
+binary) by clicking the Send Next Fragment button (or the direct send one). Do
+this multiple times until all fragments are sent.
 
 The receiving Lua SPOT should turn on a LED when it receives and
 sucessfully installed the fragmented application. All LEDs will be turned
