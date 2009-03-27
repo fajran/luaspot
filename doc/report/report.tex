@@ -39,7 +39,22 @@ Abstract
 % - scripting language
 %   -> what can scripting does
 %      -> dynamic execution
-% - concept of active network
+% - active network
+%   - general overview => what is it
+%   - what is the diffence between active network and regular/passive
+%   network
+%   - what can it does
+
+% Sensor network
+% - Tell about sensor network, what is it. Find a reference from a paper,
+%   books, journal. NOT wikipedia.
+% - Tell that we are going to use Sun SPOT
+% Scripting language
+% Acive network
+% - general overview => what is it
+% - what is the diffence between active network and regular/passive
+% network
+% - what can it does
 
 \subsection{Wireless Sensor Network}
 
@@ -186,11 +201,10 @@ from Lua scripts above.
 % FIXME: 
 % - tells about applications and they will be written in Lua (except
 %   manager)
-Lua scripts (or application) run on the top layer and they will be the
-application logic that controls the sensor network. The scripts will be run
-on the Lua virtual machine and can use APIs that are provided by the Lua
-SPOT to access functions that are provided by Sun SPOT and the Lua SPOT
-itself.
+Lua scripts run on the top layer and they will be the application logic that
+controls the sensor network. The scripts will be run on the Lua virtual machine
+and can use APIs that are provided by the Lua SPOT to access functions that are
+provided by Sun SPOT and the Lua SPOT itself.
 
 \subsection{Service Provider}
 
@@ -238,6 +252,18 @@ At the moment, we simply use the application and function name. The last
 field is the parameter that will be supplied to the function. Multiple
 parameters will be merged into one parameter and it is the function
 responsibility to parse the parameter into multiple parameters.
+
+Based on this very basic idea of making the sensor network as a service
+provider, we can build many useful and powerful applications. For example,
+a routing function can be implemented as just another function. Messages
+that need to be routed will be inserted as a message of a function call to
+a routing function. In the last part of this section, we will show you an
+example of routing function that we make as part of basic pre-installed
+applications.
+
+The routing function itself can be replaced or even we can install a new
+one that suits better with the requirements at a time. So, changing the
+behaviour of a network can be as simple as inserting a new application.
 
 \subsection{Application Execution}
 
@@ -322,6 +348,7 @@ message structure that is expected by the \texttt{install} function.
 	\rput(0.38,0.435){c}
 	\rput(1.9,0.495){manager}
 	\rput(3.98,0.435){install}
+	\usefont{T1}{ptr}{m}{n}
 	\rput(5.7,0.435){name}
 	\rput(7.1,0.435){index}
 	\rput(8.9,0.435){fragments}
@@ -334,7 +361,7 @@ message structure that is expected by the \texttt{install} function.
 	\psline[linewidth=0.04cm](7.8,0.9)(7.8,0.1)
 	\end{pspicture} 
 	}
-	\label{fig:architecture}
+	\label{fig:install}
 	\caption{Application Installation Packet Structure}
 \end{figure}
 
@@ -382,6 +409,7 @@ expects several parameters as shown in Figure~\ref{fig:routing}.
 	\rput(0.38,0.835){c}
 	\rput(1.78,0.835){router}
 	\rput(3.56,0.835){route}
+	\usefont{T1}{ptr}{m}{n}
 	\rput(5.4,0.835){msg id}
 	\rput(7.48,0.835){maxhop}
 	\rput(2.38,0.0050){src addr}
@@ -400,10 +428,18 @@ expects several parameters as shown in Figure~\ref{fig:routing}.
 	\caption{Router Packet Structure}
 \end{figure}
 
+The message contains message id that will be used to avoid processing
+duplicate messages, it also has a maximum hop number to limit the
+message distribution. Source and destrination addresses are obviusly used
+to state the sender and receiver. The last part of the message is another
+message that is embedded in this message. As mentioned earlier, that nested
+message will be sent to the \texttt{dispatch()} function so it can be
+processed just like any other message.
+
 
 % ====================================================================================
 
-\section{Active Network}
+\section{Lua SPOT and Active Network}
 
 % - we can deploy new application
 % - router is implemented as an application
@@ -415,17 +451,102 @@ expects several parameters as shown in Figure~\ref{fig:routing}.
 %     - and therefore the routing behaviour will change accordingly
 % - this fits the active network concept
 
+One of the key concept of Active Network is an ability to change network
+behavior programmatically \cite{journals/ccr/TennenhouseW07}. A message
+that is sent to a node may contain a program that will be executed on the
+node. This program will then run and control the traffic that passes
+through the node. Furthermore, a message might be an active "capsule", a
+small program that gets executed in every router/switch that it traverses.
+
+In this section, we would like to show that Lua SPOT can be used as a
+foundation in building an active network. We will try to design a Lua SPOT
+application that can show features of active network.
+
+\subsection{Interacting with Lua SPOT}
+
+The basic and only interaction with Lua SPOT is by sending an RPC message.
+Lua SPOT does nothing but accepting an RPC message and dispatch the message
+to the corresponding application and function. Therefore, all features that
+are expected from a network device are implemented as functions inside
+applications or, as we mention earlier, services.
+
+Lua SPOT has a very main function that acts as gateway of command
+execution, the \texttt{dispatch()} function. This function is called when
+Lua SPOT receives a new message. This function can also be called from
+inside an application which opens possibility of executing any message that
+is created from inside the application, including a message that is taken
+from the parameter of the function. That is, a message that is passed as a
+parameter through the \texttt{dispatch()} function that might come
+from other network elements.
+
+At the current implementation of Lua SPOT, the created Lua Virtual Machines
+will contains all installed applications. A function that is invoked can
+access all other available functions. In this way, any new application that
+is installed in the sensor networks will enrich the functionality of the
+sensor networks. The installed application can have functions that are not
+intended to be called remotely, but solely for making the sensor network
+richer.
+
+\subsection{Creating Active Network}
+
+Based on Lua SPOT approach described in the previous section, we will
+design an application that can support two scenarios that are expected from
+an Active Network, as discussed in \cite{journals/ccr/TennenhouseW07}. An
+ability to execute a program embedded in the message and let the program to
+control the traffic; and a support to send "capsule" to the network, a
+message that contains an embedded program which will be executed on the
+receiving nodes and forwarded to other nodes.
+
+The first scenario can be achieved at least in two ways. The first one is
+by replacing the router application by another application that is smarter
+in processing the incoming messages. If this routing function is a standard
+routing function that is used to carry all other messages, replacing it
+means changing the way the network works.
+
+Another way to achieve the first scenario is by inserting a new routing
+function. Any other messages that we want to transmit can be carried using
+that routing function. Therefore, if we have messages that need to be
+handled (routed) differently, we can use this new routing function to carry
+them.
+
+A "capsule" message can be handled by Lua SPOT by having a function that
+does two things: routing and dispatching. When the function receives a
+message, it will execute the embedded message by passing it to the
+\texttt{dispatch()} function and also forward the message to the other
+nodes. In this way, a message will get executed in every intermediate nodes
+that it traverses.
+
+
 % ====================================================================================
 
 \section{Experiments}
 
 % we build a host application that uses services on the sensor networks
 % - insert new application
-% - dynamic path calculation
+% - dynamic path calculation => we want to get a result from a collective work of sensor networks
 %   - each sensor network measure a value
 %   - they exchange the value
 %   - they calculate the path according to the values
 %   - the path will be used as a routing path
+
+% Tell that we had done two experiments
+% - application installation
+% - collective behavior test
+% Tell about our network configuration (topology)
+% - we have a base station
+% - we have a group of sensor networks (3)
+% First experiment
+% - we prepare a Lua script and then compile it
+% - we send the script to all sensor networks from the base station
+% - and we know we have sucessfully installed the app by calling
+%   the new function
+% Second experiment
+% - we are trying to setup routing path in the sensor network
+% - we don't manually create the path by telling each sensor network
+% - we send a command to the group and let them to:
+%   - exchange informations
+%   - use those informations to calculate the path
+% - we send a command to show the path
 
 \subsection{Topology}
 
@@ -474,13 +595,8 @@ thus this application can no longer be called.
 %   - 
 
 
-
-\begin{thebibliography}{1}
-
-\bibitem{wsn}
-http://en.wikipedia.org/wiki/Wireless\_Sensor\_Networkas
-
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{report}
 
 \end{document}
 
