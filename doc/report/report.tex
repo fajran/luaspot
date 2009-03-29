@@ -28,12 +28,12 @@ Email: zzheng@science.uva.nl}}
 \begin{abstract}
 Each sensor node in the sensor networks is typically programmed for a
 certain task. Changing task means changing application that is run on the
-sensor node and this is difficult to be done. We provide a solution to make
-the sensor network scriptable that is also allows us to dynamically install
-new applications through the network. We will also show that our solution
-can be used as a foundation to build an active network.
+sensor node and this is difficult to be done manually since the number of
+sensor nodes might be very large. We provide a solution to make a
+scriptable sensor network that also allows us to dynamically install new
+applications through the network. We will also show that our solution can
+also be used as a foundation to build an active network.
 \end{abstract}
-
 
 
 \section{introduction}
@@ -87,7 +87,6 @@ users to inject programs to the network nodes
 \cite{journals/ccr/TennenhouseW07} that later on can do some computations
 on the messages flowing through them \cite{Ten97}. We call this as
 programmatically change the network behavior.
-
 
 % \subsection{Wireless Sensor Network}
 % 
@@ -228,17 +227,20 @@ language and it is designed as an embedded scripting language
 Machine that is written on Java langauge which can be run on top of Sun
 SPOT, the sensor node that we use.
 
-We will describe Lua SPOT in detail in the following sections.
+To avoid confusion, we will use term \textbf{Lua SPOT} if we refer to the
+native application that we build on Sun SPOT. The Lua scripts will be
+addressed as \textbf{applications} that run on the Lua SPOT.
+
+We will describe Lua SPOT in more detail in the following sections.
 
 \subsection{Software Architecture}
 
 First of all, we would like to give a general overview of the building
 blocks of Lua SPOT. As shown in Figure~\ref{fig:architecture},
-generally Lua SPOT is composed of three layers including the Sun
-SPOT layer where Lua SPOT runs on. This layer is where Lua SPOT gets
-executed. It also provides APIs to use the wireless network, access sensors
-and other input/output ports that can be used by any Sun SPOT application
-that run on top of it.
+generally Lua SPOT is composed of three layers, including the Sun
+SPOT layer where Lua SPOT gets executed. It also provides APIs to use the
+wireless network, access sensors and other input/output ports that can be
+used by any Sun SPOT application that run on top of it.
 
 \begin{figure}[htbp]
 	\centering
@@ -278,7 +280,7 @@ from Lua scripts above.
 % FIXME: 
 % - tells about applications and they will be written in Lua (except
 %   manager)
-Lua scripts run on the top layer and they will be the application logic that
+Lua scripts run at the top layer and they will be the application logic that
 controls the sensor node. The scripts will be run on the Lua virtual machine
 and can use APIs that are provided by the Lua SPOT to access functions that are
 provided by Sun SPOT and the Lua SPOT itself.
@@ -289,7 +291,7 @@ In Lua SPOT, we introduce a term Service Provider. We design the sensor
 network as a service provider that provides services which can be used by
 other entities.
 
-Applications on the Lua SPOT will provide services. Functions inside each
+Applications on the Lua SPOT provide services. Functions inside each
 application can be called by other entities using some mechanism. Since the
 interaction between the functions and other entities is basically using
 function call, or remote function call to be precise, therefore an RPC like
@@ -321,32 +323,32 @@ we design the RPC message as shown in Figure~\ref{fig:rpc}.
 
 It contains four fields and each field is separated by a single space. The
 first field will be the message identifier which distinguish our packet
-with any other packet. It contains a single character \texttt{c}, a short
+with any other packets. It contains a single character \texttt{c}, a short
 for "call".
 
 The second and third field will be the application and function identifier.
 At the moment, we simply use the application and function name. The last
-field is the parameter that will be supplied to the function. Multiple
+field is the parameter that will be passed to the function. Multiple
 parameters will be merged into one parameter and it is the function
 responsibility to parse the parameter into multiple parameters.
 
 Based on this very basic idea of making the sensor network as a service
 provider, we can build many useful and powerful applications. For example,
 a routing function can be implemented as just another function. Messages
-that need to be routed will be inserted as a message of a function call to
-a routing function. In the last part of this section, we will show you an
-example of routing function that we make as part of basic pre-installed
-applications.
+that need to be routed will be inserted as an embedded message of a
+function call to a routing function. In the last part of this section, we
+will show you an example of routing function that we make as part of basic
+pre-installed applications.
 
-The routing function itself can be replaced or even we can install a new
-one that suits better with the requirements at a time. So, changing the
+If we eventually need a better routing function, we can replace the
+existing routing function or even create a new function. So, changing the
 behaviour of a network can be as simple as inserting a new application.
 
 \subsection{Application Execution}
 
 When the connection listener in the Lua SPOT receives a message, it will
 create a new thread and pass the message to a function called
-\texttt{dispatch()} from inside the thread.  This function handles the
+\texttt{dispatch()} from inside the thread. This function handles the
 initial message processing. It drops unwanted messages and extracts the
 application and function name as well as the parameter.
 
@@ -359,13 +361,12 @@ applications.
 
 % TODO: elaborate more
 All installed applications will be available inside the Lua Virtual
-Machine. One application can call function on another application. 
+Machine. One application can call function on another application.
 
-Since each function call is executed under a separate Lua Virtual Machine,
-this means the function call is stateless because any state will be
-destroyed once the function returns. One function execution and other
-function executions that happen at the same time can't interfere each
-other. 
+Since each function call is executed under a separate and new Lua Virtual
+Machine, this means the function call is stateless because any state will
+be destroyed once the function returns. In addition, multiple function
+executions that happen at the same time can't interfere each other. 
 
 However, a special APIs are provided by the Lua SPOT that allow the
 applications to share a global state. This will be described in the next
@@ -374,13 +375,14 @@ section.
 \subsection{Sun SPOT and Lua SPOT APIs}
 
 Originally, the APIs that are available inside the Lua Virtual Machine is
-very limited. It only contains the Lua standard library so the scripts run
-on it are useless since they can only process something (the parameter)
-from the network but can't do something to the network.
+very limited. It only contains the Lua standard library and this makes the
+scripts run on it are practically useless since they can only process
+something (the parameter) from the network but can't do something to the
+network.
 
-Therefore, a set of functions that are categorized into two APIs are
+Therefore, a set of functions, that are grouped into two API sets, are
 provided: Sun SPOT and Lua SPOT APIs. The Sun SPOT API contains functions
-to access facilities provided by the Sun SPOT such as sensors and other
+to access facilities provided by the Sun SPOT, such as sensors and other
 input/output ports. The second API contains other functions that are
 required to make applications run on Lua SPOT more powerful, such as the
 global memory storage, synchronization, and also function to send message
@@ -391,16 +393,15 @@ to the network.
 There are two basic applications in the Lua SPOT: Application Manager and
 Basic Router. The first application is responsible for adding, removing,
 and installing new application. The second application provides a routing
-function to route a message from one sensor node to other sensor
-node.
+function to route a message from one sensor node to other sensor nodes.
 
 \subsubsection{Application Manager}
 
-Installing a new application in Sun SPOT is just a matter of calling a
-function. A default application called Application Manager is reponsible to
+Installing a new application in Sun SPOT is also just a matter of calling a
+function. A default application, called Application Manager, is reponsible to
 handle this kind of things. This application, which is named
-\texttt{manager}, is written in Java and will be
-the only application that is written in Java.
+\texttt{manager}, is written in Java and will be the only application that
+is written in Java.
 
 The application has two main functions: \texttt{install} and
 \texttt{remove}. The \texttt{remove} function need an application name that
@@ -409,11 +410,11 @@ complex structure of the parameter since special care is needed when
 receiving new application data.
 
 The size of message that can be transmitted to the network in one go is
-limited. This can be considered as the MTU in the regular network.
-Since the application size can be larger than the MTU, a data fragmentation
-is needed. Therefore, the parameter of the \texttt{install} function
-contains information about fragments. Figure~\ref{fig:install} shows the
-message structure that is expected by the \texttt{install} function.
+limited. This can be imagined as the MTU in the regular network.  Since the
+application size can be larger than the MTU, a data fragmentation is
+needed. Therefore, the parameter of the \texttt{install} function contains
+information about fragments. Figure~\ref{fig:install} shows the message
+structure that is expected by the \texttt{install} function.
 
 \begin{figure}[htbp]
 	\centering
@@ -644,31 +645,31 @@ pass the command one by one along the path they made earlier.
 In this experiment, we tried to send a installation command message. We
 installed several applications ranging from small application to a
 relatively large application, in terms of file size.
-% TODO: then?
+
+We played around with the fragment size that still can be used to send each
+fragment successfully. Based on our experience, a relatively small
+fragment size still has high error possibility when the network is
+relatively busy.
 
 \subsection{Collective Behaviour of Sensor Nodes}
 
 This experiment has a goal to show a collective behaviour of sensor
-networks. We were trying to make a routing path that is determined by a
-certain measurement, we use the value of accelerometer provided by Sun
-SPOT, taken by each sensor node. 
+nodes in the network. We were trying to make a routing path that is
+determined by a certain measurement, we use the value of accelerometer
+provided by Sun SPOT, taken by each sensor node. 
 
-The routing path calculation is done in a distributed fashion since there
-is no single sensor node that acts as a central controller. However, we
-still need a sensor node that will send a message to all other sensor
-networks that trigger the exchange, so all sensor nodes can start
-calculating the routing path. After that, we send a message to all sensor
-networks that should be responded by a sensor node that has a smallest
-measurement value. It then send a message to its next sensor node in the
-routing path calculated earlier.
+The idea was to make each sensor node exchange the value to all other
+sensor nodes. Then each sensor node individually calculate a routing path
+using the values. In our experiment, we simply make the sensor node to sort
+the values in order to make routing path. The routing path calculation is
+done in a distributed fashion since there is no single sensor node that
+acts as a central controller. However, we still need a sensor node that
+will trigger the value exchange by sending a message. 
 
-% TODO: elaborate more
-
-
-
-
-
-
+After that, we send a message to all sensor networks that should
+be responded by a sensor node that has a smallest measurement value. It
+then send a message to its next sensor node in the routing path calculated
+earlier.
 
 % \subsection{Topology}
 % 
