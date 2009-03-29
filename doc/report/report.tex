@@ -26,7 +26,6 @@ Email: zzheng@science.uva.nl}}
 \maketitle
 
 \begin{abstract}
-Abstract 
 \end{abstract}
 
 
@@ -56,38 +55,66 @@ Abstract
 % network
 % - what can it does
 
-\subsection{Wireless Sensor Network}
 
-Awireless sensor network (WSN) is a wireless network consisting of spatially
-distributed autonomousdevices using sensorsto cooperatively monitor physical or
-environmental conditions, such as temperature, sound, vibration, pressure,
-motion or pollutants, at different locations \cite{wsn} This
-resource-constrained network is usually self-configured and data centric, and
-always has dynamic topology and a specific application running on it. In our
-experiments, we use SunSpots, powerful sensor devices which are easier to
-program to make a more flexible sensor network. 
+A sensor network is a network that is composed of a collection of sensor
+node \cite{journals/cn/AkyildizSSC02}, a small device that has sensors to
+collect data, processor, and communication component. Sensor networks are
+used for several applications like measuring temperature, humidity,
+pressure, and other data that can be measured from environment.
 
-\subsection{Scripting Language}
+Each sensor node in the sensor networks is typically programmed for a
+certain task. Changing task means changing application that is run on the
+sensor node. Application installation on the sensor network become
+something that is difficult to be done \cite{MuAlKo2007}. 
 
-A scripting languageis a programming languagethat allows some control of a
-single or many software applications. Scripts are often interpreted from the
-source code or "semi-compiled" to bytecodewhich is interpreted, unlike the
-applications they are associated with, which are traditionally compiledto
-native machine code for the system on which they run. Scripting languages are
-nearly always embedded in the application with which they are associated. With
-thischaracteristicof scriptinglanguage, it can support dynamic execution fairly
-well. 
+To handle this problem, we propose a solution to make the sensor network
+scriptable. Meaning that we can run scripts on the sensor node that also
+can be installed dynamically over the network. Hence, application
+installation become easier.
 
-\subsection{Concept of Active Network}
+The application architecture that is used in our solution is flexible and
+also powerful to handle many kind of application. Not only applications
+that use the sensor node and the network, but also applications that
+control the network. We will show this by building an active network based
+on our solution. An active network is a network architecture that allows
+users to inject programs to the network nodes
+\cite{journals/ccr/TennenhouseW07} that later on can do some computations
+on the messages flowing through them \cite{Ten97}. We call this as
+programmatically change the network behavior.
 
-Active networkis an architectural framework to allow extension ofnetwork
-services by users. It can support application-specific network (layer)
-servicesand programs can inject code fragments to decide how their traffic
-isprocessed by the network.The nodes of active network are programmed to
-perform custom operations on the messages that pass through the node. For
-example, a node could be programmed or customized to handle packets on an
-individual user basis or to handle multicastpackets differently than other
-packets. 
+
+% \subsection{Wireless Sensor Network}
+% 
+% Awireless sensor network (WSN) is a wireless network consisting of spatially
+% distributed autonomousdevices using sensorsto cooperatively monitor physical or
+% environmental conditions, such as temperature, sound, vibration, pressure,
+% motion or pollutants, at different locations \cite{wsn} This
+% resource-constrained network is usually self-configured and data centric, and
+% always has dynamic topology and a specific application running on it. In our
+% experiments, we use SunSpots, powerful sensor devices which are easier to
+% program to make a more flexible sensor network. 
+% 
+% \subsection{Scripting Language}
+% 
+% A scripting languageis a programming languagethat allows some control of a
+% single or many software applications. Scripts are often interpreted from the
+% source code or "semi-compiled" to bytecodewhich is interpreted, unlike the
+% applications they are associated with, which are traditionally compiledto
+% native machine code for the system on which they run. Scripting languages are
+% nearly always embedded in the application with which they are associated. With
+% thischaracteristicof scriptinglanguage, it can support dynamic execution fairly
+% well. 
+% 
+% \subsection{Concept of Active Network}
+% 
+% Active networkis an architectural framework to allow extension ofnetwork
+% services by users. It can support application-specific network (layer)
+% servicesand programs can inject code fragments to decide how their traffic
+% isprocessed by the network.The nodes of active network are programmed to
+% perform custom operations on the messages that pass through the node. For
+% example, a node could be programmed or customized to handle packets on an
+% individual user basis or to handle multicastpackets differently than other
+% packets. 
 
 % ====================================================================================
 
@@ -139,10 +166,10 @@ installed on each sensor node. When we want to make the sensor network
 do another task, we need to install a new application that does the new
 task.
 
-Installing new application might be not an easy job. Having to visit each
-sensor node and install new application one by one requires a lot of
-human resources and costs money. This cost become higher as more sensor
-networks deployed in the field.
+Installing new application might be not an easy task \cite{MuAlKo2007}.
+Having to visit each sensor node and install new application one by one
+requires a lot of human resources and costs money. This cost become higher
+as more sensor networks deployed in the field.
 
 To reduce this cost, we need some mechanism that allows us to dynamically
 install new applications on the sensor nodes. Dynamic here means we can
@@ -164,7 +191,7 @@ sending messages that can change the way the network works.
 
 % ====================================================================================
 
-\section{Solution}
+\section{Lua SPOT}
 
 % - we have a program, called Lua SPOT
 %   it can run script, Lua script, on it
