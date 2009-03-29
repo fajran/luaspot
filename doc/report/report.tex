@@ -104,19 +104,63 @@ packets.
 %     dynamically (remotely) to all sensor networks
 %   - we also want to change the network behaviour programmatically (active network)
 
-At present, most state of the art sensor networksare designed for a single
-application. We can bear this approach on the condition that the device in the
-sensor network is not so powerful and expensive. But with the advent of more
-powerful senor devices, we want to utilize the hardware we invest in the sensor
-network to a bigger extent, hoping that it can run multiple applications in it,
-not restricted by simply measuring temperatureand humidity. Traditionally, the
-administrator of the sensor network can collect all the devices in the network
-from different locations, upgrade the firmware locally to deploy new
-applications andthen install them back. This approach is feasible but wastes
-human resources and money greatly. Spontaneouslya smarter approach which can
-dynamically install, run and removethe applications in the sensor networkhas
-been put up. This approach, which can change the behaviorof the network
-programmaticallymakes the sensor network an active network.
+% At present, most state of the art sensor networksare designed for a single
+% application. We can bear this approach on the condition that the device in the
+% sensor network is not so powerful and expensive. But with the advent of more
+% powerful senor devices, we want to utilize the hardware we invest in the sensor
+% network to a bigger extent, hoping that it can run multiple applications in it,
+% not restricted by simply measuring temperatureand humidity. Traditionally, the
+% administrator of the sensor network can collect all the devices in the network
+% from different locations, upgrade the firmware locally to deploy new
+% applications andthen install them back. This approach is feasible but wastes
+% human resources and money greatly. Spontaneouslya smarter approach which can
+% dynamically install, run and removethe applications in the sensor networkhas
+% been put up. This approach, which can change the behaviorof the network
+% programmaticallymakes the sensor network an active network.
+
+
+% - sensor network is used to do a certain task that is done by a certain
+%   application
+% - task may changes, therefore we need to install new application that
+%   does the new task
+% - installing new app might be not an easy job. visiting each
+%   location one by one wastes human resources and money greatly.
+% - the cost higher as the number of sensor networks increases
+% - beside deploying new app to do another task, we might also need to
+%   change the way the network works
+%   - for example, we need to make a better routing algorithm that
+%     pays attention to the battery level
+%   - need to make segmentation in the network
+%   - this leads to issue of creating active network
+
+Normally, a sensor network is used to do a certain task such as doing
+temperature measurement. This task is usually done by an application
+installed on each sensor node. When we want to make the sensor network
+do another task, we need to install a new application that does the new
+task.
+
+Installing new application might be not an easy job. Having to visit each
+sensor node and install new application one by one requires a lot of
+human resources and costs money. This cost become higher as more sensor
+networks deployed in the field.
+
+To reduce this cost, we need some mechanism that allows us to dynamically
+install new applications on the sensor nodes. Dynamic here means we can
+install or remove applications over the network itself and therefore we
+don't have to individually visit the sensor node and install the new
+application.
+
+Beside that, we might also need to change the network behavior. For
+example, to save more battery power, we need to use a better routing
+algorithm that pays attention to the battery power level. Another example
+is when we need to make segmentation in the network. We have to make sure
+that a message in one network segment is not broadcasted or forwarded to
+the another network segment.
+
+This idea of changing network behavior leads to issue of creating active
+network. We want to control the network behavior programmatically by
+sending messages that can change the way the network works.
+
 
 % ====================================================================================
 
@@ -137,11 +181,11 @@ programmaticallymakes the sensor network an active network.
 %     - new app installation procedure
 
 To answer the problem described in the previous section, we came up with idea
-to run one or more scripts on top of the sensor network. We first run our
-native application on the sensor network and provide it a basic capabilities to
+to run one or more scripts on top of the sensor node. We first run our
+native application on the sensor node and provide it a basic capabilities to
 run script on the application. The application handles the installation and
 execution of scripts so we can dynamically install and execute scripts on
-the sensor network. We call our application Lua SPOT.
+the sensor node. We call our application Lua SPOT.
 
 As implied in the name, Lua SPOT is able to run scripts written in Lua
 language. Lua is choosen because it is fairly simple yet powerful scripting
@@ -149,7 +193,7 @@ language and it is designed as an embedded scripting language. Lua needs a
 virtual machine to be run on and we use Kahlua
 \footnote{http://code.google.com/p/kahlua/}, an open source Lua Virtual
 Machine that is written on Java langauge which can be run on top of Sun
-SPOT, the sensor network that we use.
+SPOT, the sensor node that we use.
 
 We will describe Lua SPOT in detail in the following sections.
 
@@ -202,7 +246,7 @@ from Lua scripts above.
 % - tells about applications and they will be written in Lua (except
 %   manager)
 Lua scripts run on the top layer and they will be the application logic that
-controls the sensor network. The scripts will be run on the Lua virtual machine
+controls the sensor node. The scripts will be run on the Lua virtual machine
 and can use APIs that are provided by the Lua SPOT to access functions that are
 provided by Sun SPOT and the Lua SPOT itself.
 
@@ -218,7 +262,7 @@ interaction between the functions and other entities is basically using
 function call, or remote function call to be precise, therefore an RPC like
 mechanism will be used to invoke a function inside an application.
 
-Other entities that want to access a function inside a sensor network
+Other entities that want to access a function inside a sensor node
 should send a message that represents an RPC. For the sake of simplicity,
 we design the RPC message as shown in Figure~\ref{fig:rpc}.
 
@@ -314,8 +358,8 @@ to the network.
 There are two basic applications in the Lua SPOT: Application Manager and
 Basic Router. The first application is responsible for adding, removing,
 and installing new application. The second application provides a routing
-function to route a message from one sensor network to other sensor
-network. 
+function to route a message from one sensor node to other sensor
+node.
 
 \subsubsection{Application Manager}
 
@@ -374,16 +418,16 @@ manager will then activate the application so it is ready to be used.
 
 \subsubsection{Basic Router}
 
-When a sensor network want to send a message to another sensor network, there
+When a sensor node want to send a message to another sensor node, there
 is a case when they are not within a range so the message should be
-transmitted through one or more intermediate sensor networks. In order to
+transmitted through one or more intermediate sensor nodes. In order to
 do this, a special function need to be used so an intermediate sensor
 network can receive and forward such message. This functionality is called
 routing.
 
 Lua SPOT contains an application that does routing. It receives a message
 and if the message is not sent to it, it will forward the message. The
-message will be hopped from one sensor network to the other until
+message will be hopped from one sensor node to the other until
 eventually it reaches the destination. If the routing application receives
 a message that is directed to it, it will remove the routing header and
 process the original message. The processing is done by calling the
@@ -482,10 +526,10 @@ from other network elements.
 At the current implementation of Lua SPOT, the created Lua Virtual Machines
 will contains all installed applications. A function that is invoked can
 access all other available functions. In this way, any new application that
-is installed in the sensor networks will enrich the functionality of the
-sensor networks. The installed application can have functions that are not
-intended to be called remotely, but solely for making the sensor network
-richer.
+is installed in the sensor node will enrich the functionality of the
+sensor node, and therefore the sensor network. The installed application
+can have functions that are not intended to be called remotely, but solely
+for making the sensor node richer.
 
 \subsection{Creating Active Network}
 
@@ -551,52 +595,80 @@ that it traverses.
 To test Lua SPOT, we made two experiments. The first experiment is about
 testing the installation function. If this experiment is successful, then
 we can answer the problem described in the earlier section: we need to be
-able to dynamically deploy new applications on the sensor networks.
+able to dynamically deploy new applications on the sensor nodes.
 
 In the second experiment, we would like to show a collective behavior of
-sensor networks. We inserted an application that will exchange a
-measurement data to other sensor networks. Then, each sensor network will
+sensor nodes. We inserted an application that will exchange a
+measurement data to other sensor nodes. Then, each sensor node will
 independently calculate the data to build a routing path. Another command
-later on will be sent to the sensor networks, and they should be able to
+later on will be sent to the sensor network and they should be able to
 pass the command one by one along the path they made earlier.
 
-\subsection{Network Configuration}
+% \subsection{Network Configuration}
+
+\subsection{Application Installation}
+
+In this experiment, we tried to send a installation command message. We
+installed several applications ranging from small application to a
+relatively large application, in terms of file size.
+% TODO: then?
+
+\subsection{Collective Behaviour of Sensor Nodes}
+
+This experiment has a goal to show a collective behaviour of sensor
+networks. We were trying to make a routing path that is determined by a
+certain measurement, we use the value of accelerometer provided by Sun
+SPOT, taken by each sensor node. 
+
+The routing path calculation is done in a distributed fashion since there
+is no single sensor node that acts as a central controller. However, we
+still need a sensor node that will send a message to all other sensor
+networks that trigger the exchange, so all sensor nodes can start
+calculating the routing path. After that, we send a message to all sensor
+networks that should be responded by a sensor node that has a smallest
+measurement value. It then send a message to its next sensor node in the
+routing path calculated earlier.
+
+% TODO: elaborate more
 
 
 
 
-\subsection{Topology}
 
-%\begin{figure}[htbp]
-%	\centering
-%	\includegraphics[width=8cm]{topology}
-%	\label{fig:network-topology}
-%	\caption{Network Topology}
-%\end{figure}
 
-Multiple applications will run on the host, collecting different kinds of data
-from different applications in the sensor network. And new applications can be
-selected from the host workstation to be broadcasted to install in the network.
-Different nodes in the sensor network will communicate with each other by means
-of radio connection. 
 
-\subsection{Expectation}
-
-We expect new Lua applications can be selected from host application and be
-installed in the sensor network. The Lua application will be compiled to binary
-format beforehand. And we also expect that applications can be called and
-removed when received certain messages we specify in the above section. 
-
-\subsection{Results}
-
-In our experiments, the Lua application can really be managed dynamically in
-the sensor network.  The new Lua application, which is to light on the SunSpots
-one by one in the sequence of devices¿ orientation can be deployed in the whole
-sensor network. After installing this application, a message to run this
-application from the host will make all the nodes work coordinately to finish
-this task. And a remove message can make all the nodes remove this application,
-thus this application can no longer be called. 
-
+% \subsection{Topology}
+% 
+% %\begin{figure}[htbp]
+% %	\centering
+% %	\includegraphics[width=8cm]{topology}
+% %	\label{fig:network-topology}
+% %	\caption{Network Topology}
+% %\end{figure}
+% 
+% Multiple applications will run on the host, collecting different kinds of data
+% from different applications in the sensor network. And new applications can be
+% selected from the host workstation to be broadcasted to install in the network.
+% Different nodes in the sensor network will communicate with each other by means
+% of radio connection. 
+% 
+% \subsection{Expectation}
+% 
+% We expect new Lua applications can be selected from host application and be
+% installed in the sensor network. The Lua application will be compiled to binary
+% format beforehand. And we also expect that applications can be called and
+% removed when received certain messages we specify in the above section. 
+% 
+% \subsection{Results}
+% 
+% In our experiments, the Lua application can really be managed dynamically in
+% the sensor network.  The new Lua application, which is to light on the SunSpots
+% one by one in the sequence of devices¿ orientation can be deployed in the whole
+% sensor network. After installing this application, a message to run this
+% application from the host will make all the nodes work coordinately to finish
+% this task. And a remove message can make all the nodes remove this application,
+% thus this application can no longer be called. 
+% 
 
 % ====================================================================================
 
@@ -611,6 +683,31 @@ thus this application can no longer be called.
 %   - enrich lua spot api
 %   - 
 
+In conclusion, we have successfully created an application on sensor
+network that is able to run scripts. Beside running the pre-installed
+scripts, new scripts can also be installed in this application. This
+opens posibility to add and run new scripts after the deployment of sensor
+networks without having to visit each sensor node individually.
+
+\subsection{Future Works}
+
+The current implementation of Lua SPOT still doesn't export all functions
+of Sun SPOT to the Lua VM. It also doesn't pay attention to the memory
+usage of Lua VM as well as the applications that will be run on it. The
+message format is also not very efficient and not really binary message
+friendly. 
+
+In addition to fix the limitation at the current implementation, what we
+would like to see on Lua SPOT is some new improvements. The
+\texttt{dispatch()} function currently work synhronously. Means it will
+block the execution when it is called. An asynrhonous version of it might
+be makes the Lua SPOT more powerfull and can do something like invoking a
+function several times in relatively parallel.
+
+To make script development easier, an SDK and simulator for Lua script
+might also a good idea. The developers doesn't need Sun SPOT if they have
+something that can be used to test the scripts before actually deploying
+them to the Lua SPOT.
 
 \bibliographystyle{plain}
 \bibliography{report}
