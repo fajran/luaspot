@@ -220,11 +220,11 @@ execution of scripts so we can dynamically install and execute scripts on
 the sensor node. We call our application Lua SPOT.
 
 As implied in the name, Lua SPOT is able to run scripts written in Lua
-language. Lua is choosen because it is fairly simple yet powerful scripting
+language. Lua is chosen because it is fairly simple yet powerful scripting
 language and it is designed as an embedded scripting language
 \cite{Ieru96a}. Lua needs a virtual machine to be run on and we use Kahlua
 \footnote{http://code.google.com/p/kahlua/}, an open source Lua Virtual
-Machine that is written on Java langauge which can be run on top of Sun
+Machine that is written on Java language which can be run on top of Sun
 SPOT, the sensor node that we use.
 
 To avoid confusion, we will use term \textbf{Lua SPOT} if we refer to the
@@ -270,8 +270,8 @@ used by any Sun SPOT application that run on top of it.
 	\caption{Software Architecture}
 \end{figure}
 
-The middle layer is where Lua SPOT resides. We also put the Lua VM
-there since it will be part of Lua SPOT. This layer provides a
+The middle layer is where Lua SPOT resides. We also put the Lua Virtual
+Machine there since it will be part of Lua SPOT. This layer provides a
 script execution environment that handles scripts execution as well as
 installation and removal. APIs exposed by the Sun SPOT layer will also be
 exported to the scripts by creating function wrappers that can be called
@@ -398,8 +398,8 @@ function to route a message from one sensor node to other sensor nodes.
 \subsubsection{Application Manager}
 
 Installing a new application in Sun SPOT is also just a matter of calling a
-function. A default application, called Application Manager, is reponsible to
-handle this kind of things. This application, which is named
+function. A default application, called Application Manager, is responsible
+for handling this kind of things. This application, which is named
 \texttt{manager}, is written in Java and will be the only application that
 is written in Java.
 
@@ -626,17 +626,17 @@ that it traverses.
 %   - use those informations to calculate the path
 % - we send a command to show the path
 
-To test Lua SPOT, we made two experiments. The first experiment is about
-testing the installation function. If this experiment is successful, then
-we can answer the problem described in the earlier section: we need to be
+To test Lua SPOT, we made two experiments. The first experiment was about
+testing the installation function. If this experiment were successful, then
+we could answer the problem described in the earlier section: we need to be
 able to dynamically deploy new applications on the sensor nodes.
 
 In the second experiment, we would like to show a collective behavior of
-sensor nodes. We inserted an application that will exchange a
-measurement data to other sensor nodes. Then, each sensor node will
-independently calculate the data to build a routing path. Another command
-later on will be sent to the sensor network and they should be able to
-pass the command one by one along the path they made earlier.
+sensor nodes. We inserted an application that will exchange a measurement
+data to other sensor nodes. Then, each sensor node would independently
+calculate the data to build a routing path. Another command later on would
+be sent to the sensor network and they should be able to pass the command
+one by one along the path they made earlier.
 
 % \subsection{Network Configuration}
 
@@ -647,28 +647,27 @@ installed several applications ranging from small application to a
 relatively large application, in terms of file size.
 
 We played around with the fragment size that still can be used to send each
-fragment successfully. Based on our experience, a relatively small
-fragment size still has high error possibility when the network is
-relatively busy.
+fragment successfully. Based on our experience, a relatively small fragment
+size still has high error possibility when the network is relatively busy.
 
 \subsection{Collective Behaviour of Sensor Nodes}
 
-This experiment has a goal to show a collective behaviour of sensor
+This experiment had a goal to show a collective behaviour of sensor
 nodes in the network. We were trying to make a routing path that is
-determined by a certain measurement, we use the value of accelerometer
+determined by a certain measurement, we used the value of accelerometer
 provided by Sun SPOT, taken by each sensor node. 
 
 The idea was to make each sensor node exchange the value to all other
-sensor nodes. Then each sensor node individually calculate a routing path
-using the values. In our experiment, we simply make the sensor node to sort
-the values in order to make routing path. The routing path calculation is
-done in a distributed fashion since there is no single sensor node that
-acts as a central controller. However, we still need a sensor node that
-will trigger the value exchange by sending a message. 
+sensor nodes. Then each sensor node individually calculated a routing path
+using the values. In our experiment, we simply made the sensor node to sort
+the values in order to make routing path. The routing path calculation was
+done in a distributed fashion since there was no single sensor node that
+acts as a central controller. However, we still needed a sensor node that
+triggers the value exchange by sending a message. 
 
-After that, we send a message to all sensor networks that should
-be responded by a sensor node that has a smallest measurement value. It
-then send a message to its next sensor node in the routing path calculated
+After that, we sent a message to all sensor networks and it should
+be responded by a sensor node that had a smallest measurement value. It
+then sent a message to its next sensor node in the routing path calculated
 earlier.
 
 % \subsection{Topology}
@@ -720,7 +719,7 @@ earlier.
 In conclusion, we have successfully created an application on sensor
 network that is able to run scripts. Beside running the pre-installed
 scripts, new scripts can also be installed in this application. This
-opens posibility to add and run new scripts after the deployment of sensor
+opens possibility to add and run new scripts after the deployment of sensor
 networks without having to visit each sensor node individually.
 
 \subsection{Future Works}
@@ -733,9 +732,9 @@ friendly.
 
 In addition to fix the limitation at the current implementation, what we
 would like to see on Lua SPOT is some new improvements. The
-\texttt{dispatch()} function currently work synhronously. Means it will
-block the execution when it is called. An asynrhonous version of it might
-be makes the Lua SPOT more powerfull and can do something like invoking a
+\texttt{dispatch()} function currently work synchronously. Means it will
+block the execution when it is called. An asynchronous version of it might
+be makes the Lua SPOT more powerful and can do something like invoking a
 function several times in relatively parallel.
 
 To make script development easier, an SDK and simulator for Lua script
