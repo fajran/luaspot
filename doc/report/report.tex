@@ -222,10 +222,10 @@ the sensor node. We call our application Lua SPOT.
 As implied in the name, Lua SPOT is able to run scripts written in Lua
 language. Lua is chosen because it is fairly simple yet powerful scripting
 language and it is designed as an embedded scripting language
-\cite{Ieru96a}. Lua needs a virtual machine to be run on and we use Kahlua
-\footnote{http://code.google.com/p/kahlua/}, an open source Lua Virtual
-Machine that is written on Java language which can be run on top of Sun
-SPOT, the sensor node that we use.
+\cite{Ieru96a}. Lua needs a virtual machine to be run on and we use
+Kahlua\footnote{http://code.google.com/p/kahlua/}, an open source Lua
+Virtual Machine that is written on Java language which can be run on top of
+Sun SPOT, the sensor node that we use.
 
 To avoid confusion, we will use term \textbf{Lua SPOT} if we refer to the
 native application that we build on Sun SPOT. The Lua scripts will be
@@ -236,7 +236,10 @@ We will describe Lua SPOT in more detail in the following sections.
 \subsection{Software Architecture}
 
 First of all, we would like to give a general overview of the building
-blocks of Lua SPOT. As shown in Figure~\ref{fig:architecture},
+blocks of Lua SPOT. As shown in 
+% FIXME
+% Figure~\ref{fig:architecture},
+Figure~1,
 generally Lua SPOT is composed of three layers, including the Sun
 SPOT layer where Lua SPOT gets executed. It also provides APIs to use the
 wireless network, access sensors and other input/output ports that can be
@@ -299,7 +302,10 @@ mechanism will be used to invoke a function inside an application.
 
 Other entities that want to access a function inside a sensor node
 should send a message that represents an RPC. For the sake of simplicity,
-we design the RPC message as shown in Figure~\ref{fig:rpc}.
+we design the RPC message as shown in 
+% FIXME
+% Figure~\ref{fig:rpc}.
+Figure~2.
 
 \begin{figure}[htbp]
 	\centering
@@ -413,7 +419,11 @@ The size of message that can be transmitted to the network in one go is
 limited. This can be imagined as the MTU in the regular network.  Since the
 application size can be larger than the MTU, a data fragmentation is
 needed. Therefore, the parameter of the \texttt{install} function contains
-information about fragments. Figure~\ref{fig:install} shows the message
+information about fragments. 
+% FIXME
+% Figure~\ref{fig:install} 
+Figure~3
+shows the message
 structure that is expected by the \texttt{install} function.
 
 \begin{figure}[htbp]
@@ -475,7 +485,10 @@ if needed.
 Just like the install function, routing function is implemented as another
 function that can be called. The name of application is \texttt{routing}
 and the function that will do routing is \texttt{route}. The function
-expects several parameters as shown in Figure~\ref{fig:routing}.
+expects several parameters as shown in
+% FIXME
+% Figure~\ref{fig:routing}.
+Figure~4.
 
 \begin{figure}[htbp]
 	\centering
@@ -721,6 +734,10 @@ network that is able to run scripts. Beside running the pre-installed
 scripts, new scripts can also be installed in this application. This
 opens possibility to add and run new scripts after the deployment of sensor
 networks without having to visit each sensor node individually.
+
+We also show that we can build an active network based on application that
+we make. We make a design that can be used to support messages that changes
+the network behavior and messages that act as "capsule".
 
 \subsection{Future Works}
 
