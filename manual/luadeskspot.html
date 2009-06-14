@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LuaDeskSpot &mdash; Lua SPOT v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Lua SPOT v1.0 documentation" href="index.html" />
+    <link rel="next" title="Scripting Reference" href="scripting.html" />
+    <link rel="prev" title="Lua SPOT" href="luaspot.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="scripting.html" title="Scripting Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="luaspot.html" title="Lua SPOT"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Lua SPOT v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">LuaDeskSpot</a><ul>
+<li><a class="reference external" href="#compilation">Compilation</a></li>
+<li><a class="reference external" href="#execution">Execution</a></li>
+<li><a class="reference external" href="#luadeskspot-modules">LuaDeskSpot Modules</a><ul>
+<li><a class="reference external" href="#raw-message-module">Raw Message Module</a></li>
+<li><a class="reference external" href="#ping-module">Ping Module</a></li>
+<li><a class="reference external" href="#install-module">Install Module</a></li>
+<li><a class="reference external" href="#topology-module">Topology Module</a></li>
+<li><a class="reference external" href="#debug-module">Debug Module</a></li>
+<li><a class="reference external" href="#sniffer-module">Sniffer Module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="luaspot.html"
+                                  title="previous chapter">Lua SPOT</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="scripting.html"
+                                  title="next chapter">Scripting Reference</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/luadeskspot.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="luadeskspot">
+<span id="id1"></span><h1>LuaDeskSpot<a class="headerlink" href="#luadeskspot" title="Permalink to this headline">¶</a></h1>
+<p>LuaDeskSpot is an example application that contains several modules that
+call services in the Lua SPOT. One of the module is the script installation
+module that will call installation service in the Lua SPOT. You can use
+this installation module to install new Lua scripts to the Lua SPOT.</p>
+<p>You will need the Sun SPOT SDK and Java 5 in order to run this application.</p>
+<img alt="_images/raw.png" src="_images/raw.png" />
+<div class="section" id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this headline">¶</a></h2>
+<p>To compile LuaDeskSpot, go to the project directory and run <tt class="docutils literal"><span class="pre">ant</span> <span class="pre">host-compile</span></tt>.:</p>
+<div class="highlight-python"><pre>$ cd src/LuaDeskSpot
+$ ant host-compile</pre>
+</div>
+</div>
+<div class="section" id="execution">
+<h2>Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h2>
+<p>One of the way for using base station is by setting the base station to run in
+shared mode. Edit the <tt class="docutils literal"><span class="pre">.sunspot.properties</span></tt> under your home directory and
+insert two line like the following.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">basestation</span><span class="o">.</span><span class="n">shared</span><span class="o">=</span><span class="n">true</span>
+<span class="n">multi</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">basestation</span><span class="o">.</span><span class="n">sharing</span><span class="o">=</span><span class="n">true</span>
+</pre></div>
+</div>
+<p>After that, you can start using the host application by running it.:</p>
+<div class="highlight-python"><pre>$ cd src/LuaDeskSpot
+$ ant host-run</pre>
+</div>
+</div>
+<div class="section" id="luadeskspot-modules">
+<h2>LuaDeskSpot Modules<a class="headerlink" href="#luadeskspot-modules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="raw-message-module">
+<h3>Raw Message Module<a class="headerlink" href="#raw-message-module" title="Permalink to this headline">¶</a></h3>
+<p>This module is used to send raw message to the Lua SPOT. The the message in
+the Message text box, specify the address in the Address text box, and
+click the Send or Direct Send button.</p>
+<p>The Send button is used to send the message by calling the routing function
+in the Lua SPOTs. If you want to send a raw message without using the
+routing function, click the Direct Send button instead.</p>
+</div>
+<div class="section" id="ping-module">
+<h3>Ping Module<a class="headerlink" href="#ping-module" title="Permalink to this headline">¶</a></h3>
+<p>This module is used to call <tt class="docutils literal"><span class="pre">ping</span></tt> function of <tt class="docutils literal"><span class="pre">demo</span></tt> application that
+is pre-installed on the Lua SPOT. Any node that receive this message will
+send a response <tt class="docutils literal"><span class="pre">pong</span></tt> to the sender node. You can see the nodes that
+respond to the ping message using this module.</p>
+</div>
+<div class="section" id="install-module">
+<span id="install"></span><h3>Install Module<a class="headerlink" href="#install-module" title="Permalink to this headline">¶</a></h3>
+<p>This module is used to install new script to the Lua SPOTs.</p>
+<img alt="_images/install.png" src="_images/install.png" />
+<p>First, select your compiled script file by typing the path or clicking the
+<tt class="docutils literal"><span class="pre">...</span></tt> button. Click the <tt class="docutils literal"><span class="pre">Load</span></tt> button after that to load the file into
+memory. You can also see the size and number of fragments that need to be
+sent.</p>
+<p>After specifiying the destination address and the application name, you can
+start sending the install message (including the fragmented application
+binary) by clicking the Send Next Fragment button (or the direct send one). Do
+this multiple times until all fragments are sent.</p>
+<p>The receiving Lua SPOT should turn on a LED when it receives and
+sucessfully installed the fragmented application. All LEDs will be turned
+on with blue color if the last segment is received.</p>
+</div>
+<div class="section" id="topology-module">
+<h3>Topology Module<a class="headerlink" href="#topology-module" title="Permalink to this headline">¶</a></h3>
+<p>This module can be used to get the network topology. It also call the <tt class="docutils literal"><span class="pre">demo</span></tt> application and tell the nodes to exchange messages so all nodes will know their neighbors. This neighbor information is sent back to the host so the host can know the overall topology. The topology graph will be drawn in the application.</p>
+</div>
+<div class="section" id="debug-module">
+<h3>Debug Module<a class="headerlink" href="#debug-module" title="Permalink to this headline">¶</a></h3>
+<p>This module shows debug messages that are sent by the Lua SPOT.</p>
+</div>
+<div class="section" id="sniffer-module">
+<h3>Sniffer Module<a class="headerlink" href="#sniffer-module" title="Permalink to this headline">¶</a></h3>
+<p>This module will show all messages that are received by the application.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="scripting.html" title="Scripting Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="luaspot.html" title="Lua SPOT"
+             >previous</a> |</li>
+        <li><a href="index.html">Lua SPOT v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Fajran Iman Rusadi, Zheng Zhangzheng.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6b1.
+    </div>
+  </body>
+</html>
